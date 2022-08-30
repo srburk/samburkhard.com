@@ -1,4 +1,4 @@
-name: Github Pages Astro CI
+name: Github Pages CI Deployment
 
 on:
   push:

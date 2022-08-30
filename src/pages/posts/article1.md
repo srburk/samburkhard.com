@@ -1,5 +1,7 @@
 ---
-title: 'My Fancy Article'
+layout: ../../layouts/Article.astro
+title: "My Fancy Article"
+url: "/posts/article1"
 ---
 
 # This is a fancy article
