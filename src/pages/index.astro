@@ -5,10 +5,20 @@ const posts = await Astro.glob('./posts/*.md');
 <html>
   <head>
     <title>Sam Burkhard | Home</title>
+	<link rel="icon" href="/icon.svg" type="image/svg+xml"/>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
   </head>
   <body>
-    <h1>samburkhard.com</h1>
-	<div>
+    <div class="row" style="height: 100vh; text-align: center;">
+		<div class="column">
+			<img id="logo" src="/icon.svg" />
+			<h2>samburkhard.com is still being worked on...</h2>
+		</div>
+	</div>
+	<!-- <div>
 		{posts.map((post) => (
 			<article>
 				<h1>{post.frontmatter.title}</h1>
@@ -16,14 +26,37 @@ const posts = await Astro.glob('./posts/*.md');
 				<a href={post.frontmatter.url}>Read more</a>
 			</article>
 		))}
-	</div>
+	</div> -->
   </body>
 </html>
-
 <style>
-
 :global(body) {
-	font-family: Helvetica, sans-serif;
+	font-family: 'Inter', Helvetica, sans-serif;
+	padding: 40;
+	margin: 0;
+}
+
+h2 {
+	font-size: 1.5rem;
+}
+
+#logo {
+	max-width: 200px;
+	margin-bottom: 50px;
+}
+
+:global(.row, .column) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+:global(.row) {
+	flex-direction: row;
+}
+
+:global(.column) {
+	flex-direction: column;
 }
 
 </style>
