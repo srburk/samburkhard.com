@@ -1,73 +1,62 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+const posts = await Astro.glob('./posts/*.md');
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		<h1>Welcome to <span class="text-gradient">samburkhard.com</span></h1>
-		<p class="instructions">
-			Et sit fugiat proident non commodo consequat consectetur magna ipsum.
-		</p>
-	</main>
-</Layout>
+<html>
+  <head>
+    <title>Sam Burkhard | Home</title>
+	<link rel="icon" href="/icon.svg" type="image/svg+xml"/>
 
+	<link rel="preconnect" href="https://fonts.googleapis.com"> 
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="row" style="height: 100vh; text-align: center;">
+		<div class="column">
+			<img id="logo" src="/icon.svg" />
+			<h2>samburkhard.com is still being worked on...</h2>
+		</div>
+	</div>
+	<!-- <div>
+		{posts.map((post) => (
+			<article>
+				<h1>{post.frontmatter.title}</h1>
+				<p>{post.frontmatter.description}</p>
+				<a href={post.frontmatter.url}>Read more</a>
+			</article>
+		))}
+	</div> -->
+  </body>
+</html>
 <style>
-	:root {
-		--astro-gradient: linear-gradient(0deg, #4f39fa, #da62c4);
-	}
+:global(body) {
+	font-family: 'Inter', Helvetica, sans-serif;
+	padding: 40;
+	margin: 0;
+}
 
-	h1 {
-		margin: 2rem 0;
-	}
+h2 {
+	font-size: 1.5rem;
+}
 
-	main {
-		margin: auto;
-		padding: 1em;
-		max-width: 60ch;
-	}
+#logo {
+	max-width: 200px;
+	margin-bottom: 50px;
+}
 
-	.text-gradient {
-		font-weight: 900;
-		background-image: var(--astro-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 100% 200%;
-		background-position-y: 100%;
-		border-radius: 0.4rem;
-		animation: pulse 4s ease-in-out infinite;
-	}
+:global(.row, .column) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
-	@keyframes pulse {
-		0%,
-		100% {
-			background-position-y: 0%;
-		}
-		50% {
-			background-position-y: 80%;
-		}
-	}
+:global(.row) {
+	flex-direction: row;
+}
 
-	.instructions {
-		line-height: 1.6;
-		margin: 1rem 0;
-		background: #4f39fa;
-		padding: 1rem;
-		border-radius: 0.4rem;
-		color: var(--color-bg);
-	}
+:global(.column) {
+	flex-direction: column;
+}
 
-	.instructions code {
-		font-size: 0.875em;
-		border: 0.1em solid var(--color-border);
-		border-radius: 4px;
-		padding: 0.15em 0.25em;
-	}
-
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 1rem;
-		padding: 0;
-	}
 </style>
