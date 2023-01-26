@@ -8,13 +8,13 @@ body {
 
 body.dark-theme {
     --text-color: #C6C0BA;
-    --bkg-color: #14191C;
+    --bkg-color: #272C35;
 }
   
 @media (prefers-color-scheme: dark) {
     body {
         --text-color: #C6C0BA;
-        --bkg-color: #14191C;
+        --bkg-color: #272C35;
     }
 
     body.light-theme {
@@ -75,6 +75,11 @@ h2 {
 
 h4 {
     font-weight: 400;
+}
+
+.icon {
+    width: calc(1.25em + 2vw);
+    height: auto;
 }
 
 button {
