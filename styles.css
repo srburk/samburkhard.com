@@ -1,0 +1,83 @@
+
+/* Light/Dark Mode */
+
+body {
+    --text-color: #343434;
+    --bkg-color: #F8F9FB;
+}
+
+body.dark-theme {
+    --text-color: #C6C0BA;
+    --bkg-color: #14191C;
+}
+  
+@media (prefers-color-scheme: dark) {
+    body {
+        --text-color: #C6C0BA;
+        --bkg-color: #14191C;
+    }
+
+    body.light-theme {
+        --text-color: #343434;
+        --bkg-color: #F8F9FB;
+    }
+}
+
+/* Flex Classes */
+.row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+    align-items: center;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+}
+
+body {
+	margin: 0;
+	padding: calc(1em + 5vw);
+	left: 0;
+	top: 0;
+	font-family: 'Inter';
+    letter-spacing: -0.06em;
+    
+    background-color: var(--bkg-color);
+    color: var(--text-color);
+}
+
+header {
+    justify-content: space-between;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+a {
+    text-decoration: underline;
+    text-underline-offset: 0.1em;
+    color: var(--text-color);
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+h2 {
+    font-weight: 600;
+    font-size: calc(1.25em + 2vw);
+}
+
+h4 {
+    font-weight: 400;
+}
+
+button {
+   all: unset;
+   cursor: pointer;
+}
