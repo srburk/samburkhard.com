@@ -8,13 +8,13 @@ body {
 
 body.dark-theme {
     --text-color: #C6C0BA;
-    --bkg-color: #272C35;
+    --bkg-color: #1c1f25;
 }
   
 @media (prefers-color-scheme: dark) {
     body {
         --text-color: #C6C0BA;
-        --bkg-color: #272C35;
+        --bkg-color: #1c1f25;
     }
 
     body.light-theme {
@@ -68,9 +68,14 @@ a:hover {
     cursor: pointer;
 }
 
-h2 {
+h1 {
     font-weight: 600;
     font-size: calc(1.25em + 2vw);
+}
+
+h2 {
+    font-weight: 500;
+    font-size: calc(1em + 2vw);
 }
 
 h4 {
@@ -79,7 +84,7 @@ h4 {
 
 .icon {
     width: calc(1.25em + 2vw);
-    height: auto;
+    height: calc(1.25em + 2vw);
 }
 
 button {
