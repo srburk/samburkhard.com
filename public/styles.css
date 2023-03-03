@@ -75,7 +75,8 @@ h1 {
 
 h2 {
     font-weight: 500;
-    font-size: calc(1em + 2vw);
+    font-size: calc(1.5em + 1vw);
+    /* font-size: calc(1em + 2vw); */
 }
 
 h4 {
