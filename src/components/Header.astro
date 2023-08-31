@@ -14,21 +14,23 @@ const { title } = Astro.props
 
 <script>
 
-    const btn = document.querySelector(".toggle-dark-mode");
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+const btn = document.querySelector(".toggle-dark-mode");
+const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+if (btn != null) {
     btn.addEventListener("click", function () {
-    if (prefersDarkScheme.matches) {
-    document.body.classList.toggle("light-theme");
-    var theme = document.body.classList.contains("light-theme")
-      ? "light"
-      : "dark";
-  } else {
-    document.body.classList.toggle("dark-theme");
-    var theme = document.body.classList.contains("dark-theme")
-      ? "dark"
-      : "light";
-  }
-});
+        if (prefersDarkScheme.matches) {
+        document.body.classList.toggle("light-theme");
+        var theme = document.body.classList.contains("light-theme")
+        ? "light"
+        : "dark";
+        } else {
+        document.body.classList.toggle("dark-theme");
+        var theme = document.body.classList.contains("dark-theme")
+        ? "dark"
+        : "light";
+        }
+    });
+}
         
 </script>
 
