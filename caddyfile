@@ -1,4 +1,4 @@
-localhost {
+samburkhard.com {
 	root * ./dist
 	file_server
 }
