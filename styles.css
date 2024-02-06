@@ -1,0 +1,104 @@
+
+/* Light/Dark Mode */
+
+body {
+    --text-color: #101517;
+    --bkg-color: white;
+}
+
+body.dark-theme {
+    --text-color: white;
+    --bkg-color: #101517;
+}
+  
+@media (prefers-color-scheme: dark) {
+    body {
+        --text-color: white;
+        --bkg-color: #1c1f25;
+    }
+
+    body.light-theme {
+        --text-color: #101517;
+        --bkg-color: white;
+    }
+}
+
+html {
+    max-width: 70ch;
+    padding: 1em 1em;
+    margin: auto;
+    line-height: 1.75;
+    font-size: 1.25em;
+}
+
+body {
+    font-family: 'Inter';
+    letter-spacing: -0.06em;
+    background-color: var(--bkg-color);
+    color: var(--text-color);
+}
+
+header {
+    justify-content: space-between;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+button {
+    all: unset;
+    cursor: pointer;
+}
+
+h1 {
+    font-weight: 500;
+    font-size: calc(1.25em + 0.5vw);
+}
+
+h2 {
+    font-weight: 500;
+    font-size: calc(1em + 0.5vw);
+}
+
+h3 {
+    font-weight: 300;
+    font-size: calc(0.6em + 0.5vw);
+}
+
+p {
+    font-weight: 400;
+    font-size: calc(0.9em + 0.5vw);
+}
+
+a {
+    text-decoration: underline;
+    text-underline-offset: 0.1em;
+    color: var(--text-color);
+}
+
+.a-arrow {
+    width: calc(0.6em + 0.5vw);
+    height: calc(0.6em + 0.5vw);
+    padding-left: 0.1em;
+}
+
+#toggle-dark-mode {
+    width: calc(1em + 0.5vw);
+    height: calc(1em + 0.5vw);
+}
+
+/* Flex Classes */
+.row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+    align-items: center;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+}
