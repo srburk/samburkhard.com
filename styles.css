@@ -25,7 +25,7 @@ body.dark-theme {
 
 html {
     max-width: 70ch;
-    padding: 1em 1em;
+    padding: 0em 1em;
     margin: auto;
     line-height: 1.75;
     font-size: 1.25em;
@@ -51,31 +51,47 @@ button {
     all: unset;
     cursor: pointer;
 }
+/* 
 
 h1 {
     font-weight: 500;
     font-size: calc(1.25em + 0.5vw);
 }
+ */
 
 h2 {
     font-weight: 500;
-    font-size: calc(1em + 0.5vw);
+    font-size: calc(1em + 0.2vw);
 }
 
+/* 
 h3 {
+    font-weight: 500;
+    font-size: calc(0.9em + 0.2vw);
+}
+ */
+
+h4 {
     font-weight: 300;
     font-size: calc(0.6em + 0.5vw);
 }
 
 p {
     font-weight: 400;
-    font-size: calc(0.9em + 0.5vw);
+    font-size: calc(0.9em + 0.2vw);
 }
 
 a {
     text-decoration: underline;
     text-underline-offset: 0.1em;
     color: var(--text-color);
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid var(--text-color);
 }
 
 .a-arrow {
@@ -93,9 +109,10 @@ a {
 .row {
 	display: flex;
 	flex-direction: row;
-	flex-wrap: wrap;
+	/* flex-wrap: /* wrap */; */
 	width: 100%;
     align-items: center;
+    justify-content: space-between;
 }
 
 .column {
