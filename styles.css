@@ -4,22 +4,26 @@
 body {
     --text-color: #101517;
     --bkg-color: white;
+    --accent-color: #115995;
 }
 
 body.dark-theme {
     --text-color: white;
     --bkg-color: #101517;
+    --accent-color: #5AB9EA;
 }
   
 @media (prefers-color-scheme: dark) {
     body {
         --text-color: white;
         --bkg-color: #1c1f25;
+		--accent-color: #5AB9EA;
     }
 
     body.light-theme {
         --text-color: #101517;
         --bkg-color: white;
+		--accent-color: #115995;
     }
 }
 
@@ -33,7 +37,6 @@ html {
 
 body {
     font-family: 'Inter';
-    letter-spacing: -0.06em;
     background-color: var(--bkg-color);
     color: var(--text-color);
 }
@@ -82,9 +85,9 @@ p {
 }
 
 a {
-    text-decoration: underline;
-    text-underline-offset: 0.1em;
-    color: var(--text-color);
+    text-decoration: none;
+/*     text-underline-offset: 0.1em; */
+    color: var(--accent-color);
 }
 
 hr {
