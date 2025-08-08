@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  
+  <link rel="icon" type="image/x-icon" href="./favicon.ico">
+  
+  <title>LeetPractice</title>
+  <style>
+    :root{--bg:#f7f7f8;--card:#ffffff;--muted:#6b7280;--accent:#111827}
+    html,body{height:100%;}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--accent); margin:0; padding:28px; -webkit-font-smoothing:antialiased}
+    .wrap{max-width:980px;margin:0 auto}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+    h1{font-size:18px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+    .sets{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+    .set{background:var(--card);border-radius:10px;padding:12px;box-shadow:0 1px 0 rgba(0,0,0,0.04);border:1px solid rgba(15,23,42,0.03)}
+    .set-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .set-head h2{font-size:15px;margin:0}
+    .controls{display:flex;gap:6px;align-items:center}
+    button{background:#111827;color:#fff;border:0;padding:6px 10px;border-radius:8px;font-size:13px;cursor:pointer}
+    button.ghost{background:transparent;color:var(--muted);border:1px solid rgba(0,0,0,0.06)}
+    ul.problems{list-style:none;padding:8px 0;margin:8px 0 0 0;max-height:380px;overflow:auto}
+    li.problem{display:flex;align-items:center;gap:10px;padding:6px;border-radius:6px}
+    li.problem label{flex:1;display:flex;align-items:center;gap:10px}
+    a.prob{color:var(--accent);text-decoration:none;font-size:14px}
+    a.prob:hover{text-decoration:underline}
+    input[type=checkbox]{width:18px;height:18px}
+    .muted{color:var(--muted);font-size:13px}
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+    .toolbar{display:flex;gap:8px;align-items:center}
+    .small{font-size:12px;padding:6px 8px;border-radius:6px}
+    .badge{background:#eef2ff;color:#3730a3;padding:4px 8px;border-radius:999px;font-size:12px}
+    .actions{display:flex;gap:6px}
+    @media(min-width:900px){.sets{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>LeetPractice</h1>
+        <p class="lead">LeetCode problem lists, progress saved locally.</p>
+      </div>
+      <div class="toolbar">
+        <button id="import-json" class="small ghost">Import JSON</button>
+        <button id="export-progress" class="small ghost">Export progress</button>
+        <button id="clear-all" class="small ghost">Reset all progress</button>
+      </div>
+    </header>
+
+    <main class="sets" id="sets"></main>
+
+    <footer>
+      <div class="muted">Vibe-coded test of GPT-5. Results may be unpredictable.</div>
+    </footer>
+
+
+  </div>
+  
+  <script src="blind75.js"></script>
+
+  <script>
+    // --- Prebuilt sample sets. Edit this array to add or replace full lists.
+    const setsData = [
+      blind75List
+    ];
+
+    const STORAGE_KEY = 'leetpractice:progress';
+
+    function loadProgress(){
+      try{const raw = localStorage.getItem(STORAGE_KEY); return raw? JSON.parse(raw): {} }catch(e){return {}} }
+    function saveProgress(prog){ localStorage.setItem(STORAGE_KEY, JSON.stringify(prog)); }
+
+    function isDone(prog,setId,probId){ return !!(prog[setId] && prog[setId][probId]); }
+
+    function renderSets(){
+      const container = document.getElementById('sets');
+      container.innerHTML = '';
+      const prog = loadProgress();
+      setsData.forEach(set => {
+        const setEl = document.createElement('section'); setEl.className='set';
+
+        const head = document.createElement('div'); head.className='set-head';
+        const title = document.createElement('h2'); title.textContent = set.title;
+        head.appendChild(title);
+
+        const controls = document.createElement('div'); controls.className='controls';
+
+        const rnd = document.createElement('button'); rnd.title='Open a random unsolved problem'; rnd.innerHTML = '🎲 Random';
+        rnd.addEventListener('click', ()=> randomUnsolved(set.id));
+        const markAll = document.createElement('button'); markAll.className='ghost small'; markAll.textContent='Mark all done';
+        markAll.addEventListener('click', ()=> markAllDone(set.id));
+        const reset = document.createElement('button'); reset.className='ghost small'; reset.textContent='Reset set';
+        reset.addEventListener('click', ()=> resetSet(set.id));
+
+        controls.appendChild(rnd); controls.appendChild(markAll); controls.appendChild(reset);
+        head.appendChild(controls);
+
+        setEl.appendChild(head);
+
+        const list = document.createElement('ul'); list.className='problems';
+        set.problems.forEach(prob =>{
+          const li = document.createElement('li'); li.className='problem';
+          const cb = document.createElement('input'); cb.type='checkbox'; cb.checked = isDone(prog,set.id,prob.id);
+          cb.dataset.set = set.id; cb.dataset.prob = prob.id;
+          cb.addEventListener('change', onCheckboxChange);
+
+          const label = document.createElement('label');
+          label.appendChild(cb);
+          const a = document.createElement('a'); a.className='prob'; a.textContent = prob.title; a.href = prob.url; a.target = '_blank'; a.rel='noopener';
+          label.appendChild(a);
+          li.appendChild(label);
+          list.appendChild(li);
+        });
+
+        setEl.appendChild(list);
+
+        // progress summary
+        const solved = set.problems.filter(p=> isDone(prog,set.id,p.id)).length;
+        const total = set.problems.length;
+        const progress = document.createElement('div'); progress.className='muted'; progress.style.marginTop='8px'; progress.textContent = `${solved} / ${total} solved`;
+        setEl.appendChild(progress);
+
+        container.appendChild(setEl);
+      });
+    }
+
+    function onCheckboxChange(e){
+      const setId = e.target.dataset.set; const probId = e.target.dataset.prob; const checked = e.target.checked;
+      const prog = loadProgress(); if(!prog[setId]) prog[setId] = {};
+      if(checked) prog[setId][probId] = true; else delete prog[setId][probId];
+      saveProgress(prog);
+      renderSets();
+    }
+
+    function randomUnsolved(setId){
+      const set = setsData.find(s=>s.id===setId); if(!set) return;
+      const prog = loadProgress();
+      const unsolved = set.problems.filter(p=> !isDone(prog,setId,p.id));
+      if(unsolved.length === 0){ alert('All problems in this set are marked done.'); return; }
+      const pick = unsolved[Math.floor(Math.random()*unsolved.length)];
+      // Open without revealing type — just open the problem link in new tab
+      window.open(pick.url, '_blank');
+    }
+
+    function markAllDone(setId){
+      const prog = loadProgress(); if(!prog[setId]) prog[setId] = {};
+      const set = setsData.find(s=>s.id===setId);
+      set.problems.forEach(p=> prog[setId][p.id] = true);
+      saveProgress(prog); renderSets();
+    }
+
+    function resetSet(setId){
+      if(!confirm('Reset progress for this set?')) return;
+      const prog = loadProgress(); if(prog[setId]) delete prog[setId]; saveProgress(prog); renderSets();
+    }
+
+    // Import/Export handlers
+    document.getElementById('import-json').addEventListener('click', ()=>{
+      const raw = prompt('Paste JSON for one set or an array of sets. Example: [{"id":"my","title":"My Set","problems":[{"id":"p1","title":"Two Sum","url":"https://..."}]}]');
+      if(!raw) return;
+      try{
+        const parsed = JSON.parse(raw);
+        if(Array.isArray(parsed)) parsed.forEach(s=> setsData.push(s)); else setsData.push(parsed);
+        renderSets();
+      }catch(e){ alert('Invalid JSON.'); }
+    });
+
+    document.getElementById('export-progress').addEventListener('click', ()=>{
+      const prog = loadProgress(); const blob = new Blob([JSON.stringify(prog,null,2)],{type:'application/json'});
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='leetpractice-progress.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('clear-all').addEventListener('click', ()=>{
+      if(!confirm('Clear all saved progress?')) return; localStorage.removeItem(STORAGE_KEY); renderSets();
+    });
+
+    // initial render
+    renderSets();
+  </script>
+</body>
+</html>
