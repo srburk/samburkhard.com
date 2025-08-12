@@ -29,9 +29,7 @@ body.dark-theme {
 }
 
 html {
-    max-width: 64ch;
-    padding: 24px;
-    margin: auto;
+    padding: clamp(16px, 4vw, 24px);
     line-height: 1.8;
     font-size: 18px;
 }
@@ -41,6 +39,35 @@ body {
     background-color: var(--bkg-color);
     color: var(--text-color);
 }
+
+/* Layout */
+.layout {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 64ch) 1fr; /* center main column */
+    column-gap: 100px; /* push sidebar further left from main */
+    }
+
+main {
+    grid-column: 2; /* centered column */
+}
+
+.sidebar {
+    grid-column: 1;
+    justify-self: end; /* hug the main column */
+    text-align: left; /* left-justify sidebar contents */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top: 24px;
+    width: max-content; /* prevent stretching across the full left column */
+}
+
+.sidebar-header { display: flex; align-items: center; gap: 8px; justify-content: flex-start; }
+.sidebar-header h1 { margin: 0; }
+.sidebar .row { width: auto; }
+.sidebar .social { display: flex; flex-direction: column; gap: 4px; }
+.sidebar .social a { display: block; }
 
 header {
     justify-content: space-between;
@@ -58,25 +85,16 @@ button {
     opacity: 0.7;
 }
 button:hover { opacity: 1; }
-/* 
 
 h1 {
     font-weight: 500;
-    font-size: calc(1.25em + 0.5vw);
+/*     font-size: 1.125rem; */
 }
- */
 
 h2 {
     font-weight: 500;
     font-size: 1.125rem;
 }
-
-/* 
-h3 {
-    font-weight: 500;
-    font-size: calc(0.9em + 0.2vw);
-}
- */
 
 h4 {
     font-weight: 300;
@@ -130,4 +148,21 @@ hr {
 .column {
 	display: flex;
 	flex-direction: column;
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 900px) {
+    .layout { display: block; }
+    .sidebar {
+        position: static;
+        text-align: left;
+        align-items: flex-start;
+        margin: 0 auto 16px; /* align with main container */
+        max-width: 64ch;     /* match main width */
+        width: auto;         /* override max-content on mobile */
+    }
+    main {
+        max-width: 64ch;
+        margin: 0 auto;
+    }
 }
