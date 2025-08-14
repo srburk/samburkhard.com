@@ -4,7 +4,8 @@
 body {
     --text-color: #101517;
     --bkg-color: #ffffff;
-    --accent-color: #115995; /* kept, but links use inherit for minimal look */
+    --accent-color: #115995;
+/*     --accent-color: #5AB9EA; */
     --muted-rule: 0.15; /* hr opacity */
 }
 
@@ -45,22 +46,24 @@ body {
     display: grid;
     grid-template-columns: 1fr minmax(0, 64ch) 1fr; /* center main column */
     column-gap: 100px; /* push sidebar further left from main */
-    }
+    height: 100vh;
+}
 
 main {
-    grid-column: 2; /* centered column */
+    grid-column: 2; centered column
 }
 
 .sidebar {
     grid-column: 1;
-    justify-self: end; /* hug the main column */
+    justify-self: end;
     text-align: left; /* left-justify sidebar contents */
     display: flex;
     flex-direction: column;
     gap: 10px;
+/*     align-self: start; /* allow sticky inside grid (avoid stretch) */ */
     position: sticky;
     top: 24px;
-    width: max-content; /* prevent stretching across the full left column */
+    width: max-content;
 }
 
 .sidebar-header { display: flex; align-items: center; gap: 8px; justify-content: flex-start; }
@@ -69,42 +72,56 @@ main {
 .sidebar .social { display: flex; flex-direction: column; gap: 4px; }
 .sidebar .social a { display: block; }
 
+/* 
+button {
+    all: unset;
+    cursor: pointer;
+    color: inherit;
+    
+/*     margin-top: auto; */
+}
+button:hover { opacity: 1; }
+ */
+
 header {
     justify-content: space-between;
     margin: 12px 0 8px;
 }
 
+
 footer {
     margin: 48px 0 8px;
 }
 
-button {
-    all: unset;
-    cursor: pointer;
-    color: inherit;
-    opacity: 0.7;
-}
-button:hover { opacity: 1; }
-
 h1 {
-    font-weight: 500;
-/*     font-size: 1.125rem; */
-}
-
-h2 {
-    font-weight: 500;
+    font-weight: 600;
     font-size: 1.125rem;
 }
 
+h2 {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+h3 {
+    font-weight: 500;
+    font-size: 1rem;
+}
+
 h4 {
-    font-weight: 300;
-    font-size: 0.9rem;
+    font-weight: 400;
+    font-size: 1rem;
+    margin: 0.25rem 0 0.75rem;
 }
 
 p {
     font-weight: 400;
-    font-size: 1rem;
-    margin: 0.25rem 0 0.75rem;
+    font-size: 0.85rem;
+}
+
+footer p {
+    font-weight: 300;
+    font-size: 0.9rem;
 }
 
 a {
@@ -114,6 +131,14 @@ a {
     text-decoration-thickness: 0.08em;
 }
 a:hover { text-decoration-thickness: 0.12em; }
+
+/* PROJECT CSS */
+.project a {
+    text-decoration: none;
+    color: var(--accent-color)
+}
+
+.project h3 { margin: 0 0 -0.5rem; }
 
 hr {
     display: block;
