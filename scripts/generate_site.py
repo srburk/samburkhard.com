@@ -48,7 +48,8 @@ def render_index():
     def render_project_link(project: Project) -> str:
         return f"<article class='project'><h3><a href='{project.link}' target='_blank' rel='noopener noreferrer'>{project.title} ↗</a></h3><p>{project.summary}</p></article>".strip()
     
-    rendered_post_links = [render_post_link(x) for x in posts]
+    sorted_posts = sorted(posts, key=lambda d: d.date, reverse=True)
+    rendered_post_links = [render_post_link(x) for x in sorted_posts]
     rendered_project_links = [render_project_link(x) for x in projects]
     
     with open("./templates/index_template.html", "r", encoding="utf-8") as f:

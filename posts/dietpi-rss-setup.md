@@ -3,18 +3,13 @@ title: 'DietPi Setup'
 date: 08-16-2025
 ---
 
-# Test hello world he hed adsflksdjfkjadslkfakldsjflkjsadlkfjjsdfasdfasdfjadslfjlasflkjsadlfjklasjdflkjsdlkjfsjdflasjflksdkljflsdjfjaslkfj
+## Pre Outline
 
-salkdjflksajfjalsjflksdjalkfjalskdf
-
-## hlajfkljsjfadlkjdklf
-
-alkjdlkjldksjfsdlkfasdfasldfjaslkjdflksajldflsakdffflkasdlkjfadsljfladslfjadsfladslkflkadsjfkladsjfoiwjfionwoifnioweoifiowefoin
-
-1. alksjdflkajdsf
-2. salkjdfasdf
-3. laskjdflkjasdf
-4. alksdjflkajdlkfadsf
-
-
-## klasjdlfkjasdklfksdaf
+* 
+* Miniflux
+    * Postgres DietPi
+    * Postgres config
+    * Not using TCP/IP and using socket instead
+* Tailscale
+    * Serve
+    * Trusting certs (tailscale cert)
