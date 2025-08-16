@@ -1,6 +1,6 @@
 ---
 title: 'DietPi Setup'
-date: 2025-08-16
+date: 08-16-2025
 ---
 
 # Test hello world he hed adsflksdjfkjadslkfakldsjflkjsadlkfjjsdfasdfasdfjadslfjlasflkjsadlfjklasjdflkjsdlkjfsjdflasjflksdkljflsdjfjaslkfj

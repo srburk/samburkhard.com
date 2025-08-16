@@ -3,8 +3,10 @@ CURR = ./Sam_Burkhard_CV.yaml
 CORE := public/*
 BUILD := build
 
+BUILD_FLAGS = --rss
+
 .PHONY: all
-all: copy-core build-posts
+all: copy-core generate-site
 
 .PHONY: serve
 serve: all
@@ -22,10 +24,9 @@ copy-core:
 	@mkdir -p $(BUILD)
 	@cp -r $(CORE) $(BUILD)/
 
-.PHONY: build-posts
-build-posts:
-	@python3 ./scripts/generate_site.py
-	@echo Built posts
+.PHONY: site
+generate-site:
+	@python3 ./scripts/generate_site.py $(BUILD_FLAGS)
 
 .PHONY: clean
 clean:

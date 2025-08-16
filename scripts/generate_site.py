@@ -1,4 +1,7 @@
 from pathlib import Path
+import xml.etree.ElementTree as ET
+from datetime import datetime
+import argparse
 import string
 import markdown
 import yaml
@@ -14,13 +17,13 @@ projects = []
 
 def render_index():
 
-    def render_post_link(path: str, title: str) -> str:
-        return f"<article class='post'><h3><a href='/{path}'>{title}</a></h3></article>".strip()
+    def render_post_link(post: Post) -> str:
+        return f"<article class='post'><h3><a href='/{post.slug}'>{post.title}</a></h3></article>".strip()
     
     def render_project_link(path: str, title: str, summary: str) -> str:
         return f"<article class='project'><h3><a href='https://github.com/srburk/StatelyShipments' target='_blank' rel='noopener noreferrer'>{title} ↗</a></h3><p>{summary}</p></article>".strip()
     
-    rendered_post_links = [render_post_link(x[0], x[1]) for x in posts]
+    rendered_post_links = [render_post_link(x) for x in posts]
     rendered_project_links = [render_project_link(x[0], x[1], x[2]) for x in projects]
     
     with open("./templates/index_template.html", "r", encoding="utf-8") as f:
@@ -69,6 +72,13 @@ def render_page(template: str, html: str, frontmatter: dict):
     )
     
     return rendered_page
+    
+class Post:
+    def __init__(self, slug: str, title: str, date: str, description=""):
+        self.slug = slug
+        self.title = title
+        self.date = date
+        self.description = description
 
 def build_posts():
 
@@ -86,9 +96,9 @@ def build_posts():
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
                     html = markdown.markdown(parts[2])
-                                        
-                    posts.append((file_path.stem, front_matter.get("title")))
                     
+                    posts.append(Post(file_path.stem, front_matter.get("title"), front_matter.get("date")))
+                                                            
                     rendered_page = render_page("post_template.html", html, front_matter)
                     
                     # write each to a different folder so github pages routes automatically
@@ -127,7 +137,43 @@ def build_projects():
                 except Exception as e:
                     print("Other error:", e)
 
+def generate_rss():
+    rss = ET.Element("rss", version="2.0")
+    channel = ET.SubElement(rss, "channel")
+    
+    site_link = "https://samburkhard.com"
+
+    ET.SubElement(channel, "title").text = "Sam Burkhard's Website"
+    ET.SubElement(channel, "link").text = site_link
+    ET.SubElement(channel, "description").text = "Personal website / project showcase"
+
+    for post in sorted(posts, key=lambda p: p.date, reverse=True):
+        item = ET.SubElement(channel, "item")
+        ET.SubElement(item, "title").text = post.title
+        ET.SubElement(item, "link").text = f"{site_link}/{post.slug}"
+        ET.SubElement(item, "guid").text = f"{site_link}/{post.slug}"
+        ET.SubElement(item, "description").text = post.description
+
+        pub_date = datetime.strptime(post.date, "%m-%d-%Y")
+        ET.SubElement(item, "pubDate").text = pub_date.strftime(
+            "%a, %d %b %Y %H:%M:%S +0000"
+        )
+
+    tree = ET.ElementTree(rss)
+    output_path = BUILD_FOLDER / "feed.xml"
+    tree.write(output_path, encoding="utf-8", xml_declaration=True)
+    print(f"✅ RSS feed written to {output_path}")
+
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Static site generator")
+    parser.add_argument(
+        "--rss",
+        action="store_true",
+        help="Generate the RSS feed"
+    )
+
+    args = parser.parse_args()
 
     BUILD_FOLDER.mkdir(exist_ok=True)
     
@@ -149,5 +195,8 @@ if __name__ == "__main__":
     rendered_404 = render_page("404_template.html", "", {})
     with open(BUILD_FOLDER / "404.html", "w", encoding="utf-8") as f:
         f.write(rendered_404)
+        
+    if args.rss:
+        generate_rss()
         
     
