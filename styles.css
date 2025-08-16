@@ -39,6 +39,7 @@ body {
     font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     background-color: var(--bkg-color);
     color: var(--text-color);
+    word-wrap: break-word;
 }
 
 /* Layout */
