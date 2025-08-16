@@ -1,6 +1,6 @@
 
 CURR = ./Sam_Burkhard_CV.yaml
-CORE := index.html styles.css public CNAME
+CORE := public/*
 BUILD := build
 
 .PHONY: all
@@ -24,7 +24,7 @@ copy-core:
 
 .PHONY: build-posts
 build-posts:
-	@python3 ./scripts/render_posts.py 1>/dev/null
+	@python3 ./scripts/generate_site.py
 	@echo Built posts
 
 .PHONY: clean

@@ -42,14 +42,6 @@ body {
     word-wrap: break-word;
 }
 
-/* Layout */
-.layout {
-    display: grid;
-    grid-template-columns: 1fr minmax(0, 64ch) 1fr; /* center main column */
-    column-gap: 100px; /* push sidebar further left from main */
-    height: 100vh;
-}
-
 main {
     grid-column: 2; centered column
 }
@@ -133,13 +125,19 @@ a {
 }
 a:hover { text-decoration-thickness: 0.12em; }
 
-/* PROJECT CSS */
+#wordmark a {
+    text-decoration: none;
+}
+
+/* START PROJECT CSS */
 .project a {
     text-decoration: none;
     color: var(--accent-color)
 }
 
 .project h3 { margin: 0 0 -0.5rem; }
+
+/* END PROJECT CSS */
 
 hr {
     display: block;
@@ -161,7 +159,14 @@ hr {
     height: 1.125rem;
 }
 
-/* Flex Classes */
+/* START LAYOUT */
+.layout {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 64ch) 1fr; /* center main column */
+    column-gap: 100px; /* push sidebar further left from main */
+    height: 100vh;
+}
+
 .row {
 	display: flex;
 	flex-direction: row;
@@ -175,6 +180,8 @@ hr {
 	display: flex;
 	flex-direction: column;
 }
+
+/* END LAYOUT */
 
 /* Responsive: stack on small screens */
 @media (max-width: 900px) {

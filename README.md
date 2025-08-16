@@ -3,7 +3,11 @@
 
 ## Running
 
-Install fswatch (macOS)
+### Building on change
+
+Install fswatch (macOS).
+
+Probably will need to be more intelligent if there are a lot of posts.
 
 ## Post Format
 
