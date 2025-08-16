@@ -15,16 +15,29 @@ BUILD_FOLDER = Path("./build")
 posts = []    
 projects = []
 
+class Post:
+    def __init__(self, slug: str, title: str, date: str, description=""):
+        self.slug = slug
+        self.title = title
+        self.date = date
+        self.description = description
+
+class Project:
+    def __init__(self, title: str, summary: str, link: str = ""):
+        self.title = title
+        self.summary = summary
+        self.link = link
+
 def render_index():
 
     def render_post_link(post: Post) -> str:
-        return f"<article class='post'><h3><a href='/{post.slug}'>{post.title}</a></h3></article>".strip()
+        return f"<article class='post'><h3>{post.date} | <a href='/{post.slug}'>{post.title} ↗</a></h3><p>{post.description}</p></article>".strip()
     
-    def render_project_link(path: str, title: str, summary: str) -> str:
-        return f"<article class='project'><h3><a href='https://github.com/srburk/StatelyShipments' target='_blank' rel='noopener noreferrer'>{title} ↗</a></h3><p>{summary}</p></article>".strip()
+    def render_project_link(project: Project) -> str:
+        return f"<article class='project'><h3><a href='{project.link}' target='_blank' rel='noopener noreferrer'>{project.title} ↗</a></h3><p>{project.summary}</p></article>".strip()
     
     rendered_post_links = [render_post_link(x) for x in posts]
-    rendered_project_links = [render_project_link(x[0], x[1], x[2]) for x in projects]
+    rendered_project_links = [render_project_link(x) for x in projects]
     
     with open("./templates/index_template.html", "r", encoding="utf-8") as f:
         template = f.read()
@@ -72,13 +85,6 @@ def render_page(template: str, html: str, frontmatter: dict):
     )
     
     return rendered_page
-    
-class Post:
-    def __init__(self, slug: str, title: str, date: str, description=""):
-        self.slug = slug
-        self.title = title
-        self.date = date
-        self.description = description
 
 def build_posts():
 
@@ -95,9 +101,9 @@ def build_posts():
                         # handle front matter
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
-                    html = markdown.markdown(parts[2])
+                    html = markdown.markdown(parts[2], extensions=["fenced_code"])
                     
-                    posts.append(Post(file_path.stem, front_matter.get("title"), front_matter.get("date")))
+                    posts.append(Post(file_path.stem, front_matter.get("title"), front_matter.get("date"), description=front_matter.get("summary", "")))
                                                             
                     rendered_page = render_page("post_template.html", html, front_matter)
                     
@@ -130,7 +136,7 @@ def build_projects():
                     front_matter = yaml.safe_load(parts[1])
                     html = markdown.markdown(parts[2])
                     
-                    projects.append((file_path.stem, front_matter.get("title"), front_matter.get("summary")))
+                    projects.append(Project(front_matter.get("title"), front_matter.get("summary"), front_matter.get("link")))
                     
                 except yaml.YAMLError as e:
                     print("YAML parsing error:", e)

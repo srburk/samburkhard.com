@@ -30,7 +30,7 @@ body.dark-theme {
 }
 
 html {
-    padding: clamp(16px, 4vw, 24px);
+    padding: clamp(16px, 4vw, 4em);
     line-height: 1.8;
     font-size: 18px;
 }
@@ -43,8 +43,13 @@ body {
 }
 
 main {
-    grid-column: 2; centered column
+    grid-column: 2;
 }
+
+.title { 
+    margin-top: 0;
+}
+
 
 .sidebar {
     grid-column: 1;
@@ -55,7 +60,6 @@ main {
     gap: 10px;
 /*     align-self: start; /* allow sticky inside grid (avoid stretch) */ */
     position: sticky;
-    top: 24px;
     width: max-content;
 }
 
@@ -74,17 +78,6 @@ button {
 /*     margin-top: auto; */
 }
 button:hover { opacity: 1; }
- */
-
-header {
-    justify-content: space-between;
-    margin: 12px 0 8px;
-}
-
-
-footer {
-    margin: 48px 0 8px;
-}
 
 h1 {
     font-weight: 600;
@@ -104,10 +97,10 @@ h3 {
 h4 {
     font-weight: 400;
     font-size: 1rem;
-    margin: 0.25rem 0 0.75rem;
+/*     margin: 0.25rem 0 0.75rem; */
 }
 
-p {
+p, li {
     font-weight: 400;
     font-size: 0.85rem;
 }
@@ -118,24 +111,53 @@ footer p {
 }
 
 a {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-    text-decoration-thickness: 0.08em;
-}
-a:hover { text-decoration-thickness: 0.12em; }
-
-#wordmark a {
-    text-decoration: none;
-}
-
-/* START PROJECT CSS */
-.project a {
     text-decoration: none;
     color: var(--accent-color)
 }
 
-.project h3 { margin: 0 0 -0.5rem; }
+main a {
+    font-weight: 500;
+}
+
+aside a {
+    color: var(--primary-color);
+    
+} 
+.social a { text-decoration: underline;    
+    text-underline-offset: 0.15em;    
+    text-decoration-thickness: 0.08em;
+}
+.social a:hover { text-decoration-thickness: 0.12em; }
+
+ul, ol {
+    margin: 0;
+    padding-left: 1em;
+}
+
+/* START CODE SECTION */
+
+code {
+    background-color: #f5f5f5;  /* subtle dark background */
+    padding: 0.2em 0.2em;
+    font-size: 0.75rem;
+}
+
+pre code {
+    display: block;
+    padding: 0.5em 1em;
+    padding: 2em;
+    background-color: #f5f5f5;
+    border-radius: 0.5em;
+    border-style: solid;
+    border-width: thin;
+    border-color: #dddddd;
+    overflow-x: scroll;
+    line-height: 1.2;
+}
+
+/* END CODE SECTION */
+
+article p { margin-top: -0.5rem; }
 
 /* END PROJECT CSS */
 
@@ -146,12 +168,6 @@ hr {
     border-top: 1px solid currentColor;
     opacity: var(--muted-rule);
     margin: 24px 0;
-}
-
-.a-arrow {
-    width: calc(0.6em + 0.5vw);
-    height: calc(0.6em + 0.5vw);
-    padding-left: 0.1em;
 }
 
 #toggle-dark-mode {

@@ -1,8 +1,6 @@
 
 #!/bin/bash
 
-# WATCH_FOLDERS=()
-
 trap "echo -n 'Stopping watcher'; exit 0" SIGINT SIGTERM
 
 fswatch -0 --exclude "build" "./" | while read -d "" file; do

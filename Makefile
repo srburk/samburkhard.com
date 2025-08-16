@@ -1,5 +1,4 @@
 
-CURR = ./Sam_Burkhard_CV.yaml
 CORE := public/*
 BUILD := build
 
