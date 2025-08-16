@@ -201,7 +201,7 @@ hr {
 /* END LAYOUT */
 
 /* Responsive: stack on small screens */
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
     .layout { display: block; }
     .sidebar {
         position: static;

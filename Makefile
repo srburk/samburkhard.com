@@ -9,7 +9,7 @@ all: copy-core generate-site
 
 .PHONY: draft
 draft: copy-core
-	@python3 ./scripts/generate_site.py --allow_draft
+	@python3 ./scripts/generate_site.py $(BUILD_FLAGS) --allow_draft
 
 .PHONY: serve
 serve: draft

@@ -1,6 +1,7 @@
 from pathlib import Path
 from lxml import etree as ET
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import argparse
 import string
 import markdown
@@ -157,8 +158,7 @@ def generate_rss():
 
     ET.SubElement(channel, "title").text = "Sam Burkhard's Website"
     ET.SubElement(channel, "link").text = site_link
-    ET.SubElement(channel, "description").text = "Personal website / project showcase"
-
+    ET.SubElement(channel, "description").text = "Personal website / Project showcase"
     for post in sorted(posts, key=lambda p: p.date, reverse=True):
         item = ET.SubElement(channel, "item")
         ET.SubElement(item, "title").text = post.title
@@ -169,9 +169,12 @@ def generate_rss():
         content_encoded = ET.SubElement(item, f"{{{NS_CONTENT}}}encoded")
         content_encoded.text = ET.CDATA(post.content)
 
-        pub_date = datetime.strptime(post.date, "%m-%d-%Y")
+        pub_date = datetime.strptime(post.date, "%m-%d-%Y").replace(
+            hour=9, minute=0, second=0, tzinfo=ZoneInfo("America/New_York")
+        )
+        
         ET.SubElement(item, "pubDate").text = pub_date.strftime(
-            "%a, %d %b %Y %H:%M:%S +0000"
+            "%a, %d %b %Y %H:%M:%S %z"
         )
 
     tree = ET.ElementTree(rss)

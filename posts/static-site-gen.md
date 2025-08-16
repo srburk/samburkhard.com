@@ -131,9 +131,12 @@ def generate_rss():
         content_encoded = ET.SubElement(item, f"{{{NS_CONTENT}}}encoded")
         content_encoded.text = ET.CDATA(post.content)
 
-        pub_date = datetime.strptime(post.date, "%m-%d-%Y")
+        pub_date = datetime.strptime(post.date, "%m-%d-%Y").replace(
+            hour=9, minute=0, second=0, tzinfo=ZoneInfo("America/New_York")
+        )
+        
         ET.SubElement(item, "pubDate").text = pub_date.strftime(
-            "%a, %d %b %Y %H:%M:%S +0000"
+            "%a, %d %b %Y %H:%M:%S %z"
         )
 
     tree = ET.ElementTree(rss)
