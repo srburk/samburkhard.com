@@ -7,8 +7,12 @@ BUILD_FLAGS = --rss
 .PHONY: all
 all: copy-core generate-site
 
+.PHONY: draft
+draft: copy-core
+	@python3 ./scripts/generate_site.py --allow_draft
+
 .PHONY: serve
-serve: all
+serve: draft
 	@bash -c '\
 		python3 -m http.server 8080 --directory $(BUILD) 1> /dev/null & \
 		server_pid=$$!; \

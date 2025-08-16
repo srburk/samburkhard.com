@@ -84,7 +84,7 @@ def render_page(template: str, html: str, frontmatter: dict):
     
     return render_in_base(frontmatter.get("title", "Sam Burkhard"), rendered_content)
 
-def build_posts():
+def build_posts(args):
 
     for file_path in POSTS_FOLDER.iterdir():
         if file_path.is_file() and file_path.suffix == ".md":
@@ -101,7 +101,7 @@ def build_posts():
                     front_matter = yaml.safe_load(parts[1])
                     html = markdown.markdown(parts[2], extensions=["fenced_code"])
                     
-                    if front_matter.get("draft"):
+                    if front_matter.get("draft") and not args.allow_drafts:
                         print(f"Skipping draft post: {front_matter.get('title')}")
                         continue
                                                                                 
@@ -187,13 +187,22 @@ if __name__ == "__main__":
         action="store_true",
         help="Generate the RSS feed"
     )
+    
+    parser.add_argument(
+        "--allow_drafts",
+        action="store_true",
+        help="Include draft posts"
+    )
 
     args = parser.parse_args()
+    
+    if args.allow_drafts:
+        print("⚠️ In draft mode")
 
     BUILD_FOLDER.mkdir(exist_ok=True)
     
     if POSTS_FOLDER.is_dir():
-        build_posts()
+        build_posts(args)
         print("✅ Generated posts")
     
     if PROJECTS_FOLDER.is_dir():
