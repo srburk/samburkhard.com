@@ -1,0 +1,173 @@
+
+---
+title: 'Building a Static Site Generator in Python'
+date: 08-16-2025
+summary: 'Writing a static site generator for this website.'
+draft: true
+---
+
+WRITE ABOUT DRAFT MODE
+
+## TLDR
+
+I wrote a Python static site generator to automate building html files for posts and projects. You can look at my code [here](https://github.com/srburk/samburkhard.com).
+
+## Motivation
+
+I've been wanting to update this website for quite a while, but have found it frustrating to keep updating the HTML for projects and posts as I add them. The easiest approach here is to integrate an existing static site generator (SSG) to automate the build process for sub html pages, but I've resisted doing that because I find that they often are too heavy for my needs.
+
+For this reason, I decided to quickly build a simple SSG to accomplish my very limited needs. These are the main features I want:
+
+* **Write in markdown** – Much simpler than writing in HTML, and [Apple Notes now supports markdown export in iOS 26](https://daringfireball.net/linked/2025/06/04/apple-notes-markdown). 
+* **Generate RSS feed** – I'm a big RSS user even though it definitely predates me being on the internet. I find it frustrating when sites don't support it, so here we are.
+* **Simple Templates** – I still need some form of templating for posts like this, so just basic variable injection is sufficient.
+
+Again, this is not a novel feature list. Practically every SSG supports this (or at least has plugins in the case of RSS). The motivation for me is to have full control over an extremely lightweight build process. That way, if I need to add new features or overhaul in the future, I know how everything works, and I don't rely on a third party.
+
+At the most basic level, write markdown, throw it in a folder with a yaml frontmatter, and build. That's it.
+
+## Writing
+
+Keeping things to markdown makes things really simple for writing. I'm keeping all the markdown files in a folder in my git repository for easy version management.
+
+## Python
+
+I chose to use Python here, because it's easy for quick iteration and fast enough for my purposes. Larger SSGs can do complex content management and can deal with hundereds of files and pages. I don't need that!
+
+I'm not fully reinventing the wheel here, and have no intention to write a yaml parser or a markdown engine. For this project, I just used the most popular python packages I could find: [PYAML](https://pyyaml.org/wiki/PyYAML) and [Markdown](https://pypi.org/project/Markdown/). Similarly, for the RSS feed generation, I used [lxml](https://lxml.de) for the XML processing.
+
+So, the script does the following things when run:
+
+1. Look at the `posts` and `projects` folders, and generate a new `index.html` for each using the post and project templates.
+2. Generate a root `index.html` using the index template and inject small html elements to point to the posts and projects generated in the last step.
+3. Build an RSS feed from the posts list, and save as `feed.xml`
+
+Very simple.
+
+## Templates
+
+Templates are saved as `.html` files with `{ variable }` as the format for injecting variables. Python string formatting handles replacing the curly braces with the actual values.
+
+Following the design patterns of most static site generators, my posts and projects are defined by yaml frontmatters in markdown files like this:
+
+```yaml
+---
+title: 'Building a Static Site Generator in Python'
+date: 08-16-2025
+---
+
+# Markdown markdown markdown!!
+```
+
+The generator takes the yaml from the markdown file, and does a quick text replacement with the template, which looks like this:
+
+```html
+<h2 class="title">{title}</h2>
+<p>Published {date}</p>
+<hr />
+{content}
+```
+
+`content` here is filled with the processed html from the markdown engine. This is a very small template since this is a simple website. The main piece here is that every piece of generated html is embedded within a **base template** that has the main formatting tags for CSS and a shared sidebar, header, and footer.
+
+## RSS
+
+I like RSS feeds, so I wanted to include a build step for generating a feed from the post lists. I followed the spec LISTED HERE. 
+
+## Makefile
+
+I'm a firm believer in making things easy and dumb to build and run. To that end, I use this `Makefile` to build the website:
+
+```bash
+# Makefile
+
+CORE := public/*
+BUILD := build
+
+BUILD_FLAGS = --rss
+
+.PHONY: all
+all: copy-core generate-site
+
+.PHONY: serve
+serve: all
+	@bash -c '\
+		python3 -m http.server 8080 --directory $(BUILD) 1> /dev/null & \
+		server_pid=$$!; \
+		echo "Serving at http://127.0.0.1:8080/"; \
+		bash ./scripts/watch.sh; \
+		echo -n "Stopping Python server..."; \
+		kill $$server_pid \
+	'
+
+.PHONY: copy-core
+copy-core:
+	@mkdir -p $(BUILD)
+	@cp -r $(CORE) $(BUILD)/
+
+.PHONY: site
+generate-site:
+	@python3 ./scripts/generate_site.py $(BUILD_FLAGS)
+
+.PHONY: clean
+clean:
+	rm -rf $(BUILD)
+```
+
+Typing `make` every time I want to see my markdown rendered or a template update is tedious. I added a bash script to use fswatch on macOS to trigger a new build whenever a change is detected. 
+
+```bash
+#!/bin/bash
+# scripts/watch.sh
+
+trap "echo -n 'Stopping watcher'; exit 0" SIGINT SIGTERM
+
+fswatch -0 --exclude "build" "./" | while read -d "" file; do
+    if [[ "$file" == *.md || "$file" == *.html || "$file" == *.js || "$file" == *.css ]]; then
+        echo "Detected change in $file, rebuilding..."
+        make all
+    fi
+done
+```
+
+## Folder Structure
+
+The project is structured like so for now. All I need to do to make a new post or project is to make a new markdown file and push to my remote git server and *voila*.
+
+```
+├── Makefile
+├── posts
+│   ├── dietpi-rss-setup.md
+│   ├── static-site-gen.md
+│   └── vibe-code-gpt5-test.md
+├── projects
+│   ├── rf-messenger.md
+│   └── shipments.md
+├── public
+│   ├── favicon.ico
+│   ├── Rich Link Preview.png
+│   └── styles.css
+├── README.md
+├── scripts
+│   ├── generate_site.py
+│   ├── requirements.txt
+│   └── watch.sh
+└── templates
+    ├── 404_template.html
+    ├── base_template.html
+    ├── index_template.html
+    └── post_template.html
+```
+
+## Hosting
+
+I've been hosting on Github Pages for maybe 2 years now. I highly recommend it, I've never had any issues. Adding a custom domain is simple, and I easily added a custom workflow for the build step before deployment. Here is the action I wrote for the build and deployment steps:
+
+
+
+## Closing
+
+And that's it! I will probably spin the SSG into a separate git repo at some point and use it in this website as a submodule, but as far as I'm concerned this solves all the problems I have right now.
+
+This is a great simple solution and fun little programming project that I'm sure every computer-minded person with a website does at some point.
+

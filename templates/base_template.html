@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="HandheldFriendly" content="true">
+
+    <!-- Rich Previews -->
+    <meta property="og:title" content="{title}">
+<!--     <meta property="og:description" content="{title}"> -->
+    <meta property="og:image" content="/public/Rich Link Preview.png">
+    <meta property="og:url" content="https://samburkhard.com">
+
+    <link rel="stylesheet" href="/styles.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+
+    <a rel="me" href="https://mastodon.social/@samburkhard"></a>
+
+    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+    <title>{title}</title>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="row sidebar-header">
+                <h1 id="wordmark"><a href="/index.html">⬥ Sam Burkhard</a></h1>
+            </div>
+            <nav class="social">
+                <a href="https://github.com/srburk" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://www.linkedin.com/in/sam-burkhard-712734223/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                <a href="https://x.com/samrburkhard" target="_blank" rel="noopener noreferrer">X</a>
+                <a href="mailto: burkhas4@mail.uc.edu">Email</a>
+            </nav>
+            
+        </aside>
+
+        <main>
+            {content}
+             
+             <footer>
+                <p>© {copyright_date} Sam Burkhard</h4>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
