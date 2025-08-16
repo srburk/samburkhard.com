@@ -23,6 +23,10 @@ Again, this is not a novel feature list. Practically every SSG supports this (or
 
 At the most basic level, write markdown, throw it in a folder with a yaml frontmatter, and build. That's it.
 
+## Writing
+
+Keeping things to markdown makes things really simple for writing. I'm keeping all the markdown files in a folder in my git repository for easy version management.
+
 ## Python
 
 I chose to use Python here, because it's easy for quick iteration and fast enough for my purposes. Larger SSGs can do complex content management and can deal with hundereds of files and pages. I don't need that!

@@ -1,5 +1,5 @@
 from pathlib import Path
-import xml.etree.ElementTree as ET
+from lxml import etree as ET
 from datetime import datetime
 import argparse
 import string
@@ -16,11 +16,12 @@ posts = []
 projects = []
 
 class Post:
-    def __init__(self, slug: str, title: str, date: str, description=""):
+    def __init__(self, slug: str, title: str, date: str, content: str, description=""):
         self.slug = slug
         self.title = title
         self.date = date
         self.description = description
+        self.content = content
 
 class Project:
     def __init__(self, title: str, summary: str, link: str = ""):
@@ -99,9 +100,7 @@ def build_posts():
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
                     html = markdown.markdown(parts[2], extensions=["fenced_code"])
-                    
-                    posts.append(Post(file_path.stem, front_matter.get("title"), front_matter.get("date"), description=front_matter.get("summary", "")))
-                                                            
+                                                                                
                     rendered_page = render_page("post_template.html", html, front_matter)
                     
                     # write each to a different folder so github pages routes automatically
@@ -110,6 +109,8 @@ def build_posts():
                     
                     with open(rendered_page_path / "index.html", "w", encoding="utf-8") as f:
                         f.write(rendered_page)
+                    
+                    posts.append(Post(file_path.stem, front_matter.get("title"), front_matter.get("date"), content=html, description=front_matter.get("summary", "")))
                     
                 except yaml.YAMLError as e:
                     print("YAML parsing error:", e)
@@ -141,6 +142,10 @@ def build_projects():
                     print("Other error:", e)
 
 def generate_rss():
+
+    NS_CONTENT = "http://purl.org/rss/1.0/modules/content/"
+    ET.register_namespace("content", NS_CONTENT)
+    
     rss = ET.Element("rss", version="2.0")
     channel = ET.SubElement(rss, "channel")
     
@@ -156,6 +161,9 @@ def generate_rss():
         ET.SubElement(item, "link").text = f"{site_link}/{post.slug}"
         ET.SubElement(item, "guid").text = f"{site_link}/{post.slug}"
         ET.SubElement(item, "description").text = post.description
+        
+        content_encoded = ET.SubElement(item, f"{{{NS_CONTENT}}}encoded")
+        content_encoded.text = ET.CDATA(post.content)
 
         pub_date = datetime.strptime(post.date, "%m-%d-%Y")
         ET.SubElement(item, "pubDate").text = pub_date.strftime(
@@ -181,23 +189,26 @@ if __name__ == "__main__":
     BUILD_FOLDER.mkdir(exist_ok=True)
     
     if POSTS_FOLDER.is_dir():
-        print("Generating posts...")
         build_posts()
+        print("✅ Generated posts")
     
     if PROJECTS_FOLDER.is_dir():
-        print("Generating projects...")
         build_projects()
+        print("✅ Generated projects")
     
     # build index.html
-    print("Generating index...")
     rendered_index = render_index()
     with open(BUILD_FOLDER / "index.html", "w", encoding="utf-8") as f:
         f.write(rendered_index)
+    
+    print(f"✅ index.html written to {BUILD_FOLDER / 'index.html'}")
     
     # Generate 404 page
     rendered_404 = render_page("404_template.html", "", {})
     with open(BUILD_FOLDER / "404.html", "w", encoding="utf-8") as f:
         f.write(rendered_404)
+    
+    print(f"✅ 404.html written to {BUILD_FOLDER / '404.html'}")
         
     if args.rss:
         generate_rss()
