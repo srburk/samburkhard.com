@@ -44,6 +44,7 @@ body {
 
 main {
     grid-column: 2;
+    margin-bottom: 4em;
 }
 
 .title { 

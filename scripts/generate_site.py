@@ -100,6 +100,10 @@ def build_posts():
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
                     html = markdown.markdown(parts[2], extensions=["fenced_code"])
+                    
+                    if front_matter.get("draft"):
+                        print(f"Skipping draft post: {front_matter.get('title')}")
+                        continue
                                                                                 
                     rendered_page = render_page("post_template.html", html, front_matter)
                     

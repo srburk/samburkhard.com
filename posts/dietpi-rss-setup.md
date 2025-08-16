@@ -2,6 +2,7 @@
 title: Pistachio
 date: 08-16-2025
 summary: Lightweight Raspberry Pi setup for RSS/DNS service.
+draft: true
 ---
 
 ## Pre Outline
@@ -9,6 +10,7 @@ summary: Lightweight Raspberry Pi setup for RSS/DNS service.
 * Past setup
     * FreshRSS - too heavy for me
     * Pihole – great, talk about why
+    * Docker with portainer
     * Last homelab setup was an old Xeon my dad gave me, idled at 45W, very loud
 
 **Goals:** Reduce load on server and noise
