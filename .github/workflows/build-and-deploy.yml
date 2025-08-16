@@ -40,28 +40,28 @@ jobs:
           name: build-files
           path: ./build
   
-deploy:
-    needs: build  # Wait for build job to complete
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      # Download the build artifacts
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files
-          path: ./build
+  deploy:
+      needs: build  # Wait for build job to complete
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      runs-on: ubuntu-latest
+      steps:
+        # Download the build artifacts
+        - name: Download build artifacts
+          uses: actions/download-artifact@v4
+          with:
+            name: build-files
+            path: ./build
+            
+        - name: Setup Pages
+          uses: actions/configure-pages@v5
           
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './build'
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: './build'
+            
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
