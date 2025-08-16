@@ -6,22 +6,29 @@ import yaml
 # PATHS ARE RELATIVE BC OF CALL FROM Makefile
 
 POSTS_FOLDER = Path("./posts")
+PROJECTS_FOLDER = Path("./projects")
 BUILD_FOLDER = Path("./build")
 
 posts = []    
+projects = []
 
 def render_index():
 
     def render_post_link(path: str, title: str) -> str:
         return f"<article class='post'><h3><a href='/{path}'>{title}</a></h3></article>".strip()
     
+    def render_project_link(path: str, title: str, summary: str) -> str:
+        return f"<article class='project'><h3><a href='https://github.com/srburk/StatelyShipments' target='_blank' rel='noopener noreferrer'>{title} ↗</a></h3><p>{summary}</p></article>".strip()
+    
     rendered_post_links = [render_post_link(x[0], x[1]) for x in posts]
+    rendered_project_links = [render_project_link(x[0], x[1], x[2]) for x in projects]
     
     with open("./templates/index_template.html", "r", encoding="utf-8") as f:
         template = f.read()
-    
+        
     rendered_content = template.format(
-        posts=''.join(rendered_post_links)
+        posts=''.join(rendered_post_links),
+        projects=''.join(rendered_project_links)
     )
     
     with open("./templates/base_template.html", "r", encoding="utf-8") as f:
@@ -65,8 +72,6 @@ def render_page(template: str, html: str, frontmatter: dict):
 
 def build_posts():
 
-    POSTS_FOLDER.mkdir(exist_ok=True)
-
     for file_path in POSTS_FOLDER.iterdir():
         if file_path.is_file() and file_path.suffix == ".md":
             with open(file_path, "r", encoding="utf-8") as f:
@@ -81,7 +86,7 @@ def build_posts():
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
                     html = markdown.markdown(parts[2])
-                    
+                                        
                     posts.append((file_path.stem, front_matter.get("title")))
                     
                     rendered_page = render_page("post_template.html", html, front_matter)
@@ -98,6 +103,30 @@ def build_posts():
                 except Exception as e:
                     print("Other error:", e)
 
+def build_projects():
+
+    for file_path in PROJECTS_FOLDER.iterdir():
+        if file_path.is_file() and file_path.suffix == ".md":
+            with open(file_path, "r", encoding="utf-8") as f:
+                
+                # iterate through files
+                content = f.read()
+                
+                try:
+                    parts = content.split("---", 2)
+                    if len(parts) <= 1:
+                        # handle front matter
+                        raise ValueError("Missing YAML front matter")
+                    front_matter = yaml.safe_load(parts[1])
+                    html = markdown.markdown(parts[2])
+                    
+                    projects.append((file_path.stem, front_matter.get("title"), front_matter.get("summary")))
+                    
+                except yaml.YAMLError as e:
+                    print("YAML parsing error:", e)
+                except Exception as e:
+                    print("Other error:", e)
+
 if __name__ == "__main__":
 
     BUILD_FOLDER.mkdir(exist_ok=True)
@@ -105,6 +134,10 @@ if __name__ == "__main__":
     if POSTS_FOLDER.is_dir():
         print("Generating posts...")
         build_posts()
+    
+    if PROJECTS_FOLDER.is_dir():
+        print("Generating projects...")
+        build_projects()
     
     # build index.html
     print("Generating index...")
