@@ -1,4 +1,5 @@
 from pathlib import Path
+import string
 import markdown
 import yaml
 
@@ -7,7 +8,7 @@ import yaml
 POSTS_FOLDER = Path("./posts")
 BUILD_FOLDER = Path("./build")
 
-posts = []
+posts = []    
 
 def render_index():
 
@@ -15,7 +16,6 @@ def render_index():
         return f"<article class='post'><h3><a href='/{path}'>{title}</a></h3></article>".strip()
     
     rendered_post_links = [render_post_link(x[0], x[1]) for x in posts]
-    print(rendered_post_links)
     
     with open("./templates/index_template.html", "r", encoding="utf-8") as f:
         template = f.read()
@@ -35,16 +35,23 @@ def render_index():
     return rendered_page
 
 def render_page(template: str, html: str, frontmatter: dict):
-    # write to build folder
     # Load template
     with open(f"./templates/{template}", "r", encoding="utf-8") as f:
         template = f.read()
-        
-    rendered_content = template.format(
-        date=frontmatter.get("date"),
-        title=frontmatter.get("title"),
-        content=html # fills body
-    )
+     
+    formatter = string.Formatter()
+    fields = [fname for _, fname, _, _ in formatter.parse(template) if fname]
+    
+    kwargs = {}
+    for field in fields:
+        if field == "content":
+            kwargs[field] = html
+        elif field in frontmatter:
+            kwargs[field] = frontmatter[field]
+        else:
+            raise KeyError(f"Missing required field: {field}")
+
+    rendered_content = template.format(**kwargs)
     
     with open("./templates/base_template.html", "r", encoding="utf-8") as f:
         template = f.read() 
@@ -104,5 +111,10 @@ if __name__ == "__main__":
     rendered_index = render_index()
     with open(BUILD_FOLDER / "index.html", "w", encoding="utf-8") as f:
         f.write(rendered_index)
+    
+    # Generate 404 page
+    rendered_404 = render_page("404_template.html", "", {})
+    with open(BUILD_FOLDER / "404.html", "w", encoding="utf-8") as f:
+        f.write(rendered_404)
         
     

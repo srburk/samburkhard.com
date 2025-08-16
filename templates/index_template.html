@@ -1,58 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="HandheldFriendly" content="true">
 
-    <!-- Rich Previews -->
-    <meta property="og:title" content="Sam Burkhard">
-    <meta property="og:description" content="The Personal Website of Sam Burkhard">
-    <meta property="og:image" content="./public/Rich Link Preview.png">
-    <meta property="og:url" content="https://samburkhard.com">
+<section id="intro">
+    <h4>I'm a student at the University of Cincinnati working towards my Bachelor's and Master's degrees in Computer Engineering.</h4>
+    <h4>My interests are in iOS development, computer architecture, AI hardware design, and low-level programming.</h4>
+</section>
 
-    <link rel="stylesheet" href="/styles.css">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com"> 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<hr>
 
+<section id="posts">
 
-    <a rel="me" href="https://mastodon.social/@samburkhard"></a>
+    <h2>Posts</h2>
+    
+    {posts}
 
-    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
-    <title>Sam Burkhard</title>
-</head>
-    <section id="intro">
-        <h4>I'm a student at the University of Cincinnati working towards my Bachelor's and Master's degrees in Computer Engineering.</h4>
-        <h4>My interests are in iOS development, computer architecture, AI hardware design, and low-level programming.</h4>
-    </section>
+</section>
+
+<hr>
+
+<section id="projects">
+    <h2>Projects</h2>
+
+    <article class="project">
+        <h3><a href="https://github.com/srburk/RF-Messenger" target="_blank" rel="noopener noreferrer">STM32W RF Messenger ↗</a></h3>
+        <p>STM32W RF messaging system using FreeRTOS, C, and I2C/SPI display and keyboard.</p>
+    </article>
     
-    <hr>
-    
-    <section id="posts">
-    
-        <h2>Posts</h2>
-        
-        {posts}
-    
-    </section>
-    
-    <hr>
-    
-    <section id="projects">
-        <h2>Projects</h2>
-    
-        <article class="project">
-            <h3><a href="https://github.com/srburk/RF-Messenger" target="_blank" rel="noopener noreferrer">STM32W RF Messenger ↗</a></h3>
-            <p>STM32W RF messaging system using FreeRTOS, C, and I2C/SPI display and keyboard.</p>
-        </article>
-        
-        <article class="project">
-            <h3><a href="https://github.com/srburk/StatelyShipments" target="_blank" rel="noopener noreferrer">iOS Shipping Route Calculator ↗</a></h3>
-            <p>iOS application built with Objective-C and UIKit in 2 weeks for solving graph-based concurrency problem with visual feedback.</p>
-        </article>
-    </section>
-    
-    <hr>
-    </div>
+    <article class="project">
+        <h3><a href="https://github.com/srburk/StatelyShipments" target="_blank" rel="noopener noreferrer">iOS Shipping Route Calculator ↗</a></h3>
+        <p>iOS application built with Objective-C and UIKit in 2 weeks for solving graph-based concurrency problem with visual feedback.</p>
+    </article>
+</section>
+
+<hr>
