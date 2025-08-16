@@ -28,6 +28,18 @@ class Project:
         self.summary = summary
         self.link = link
 
+def render_in_base(title: str, content: str) -> str:
+    with open("./templates/base_template.html", "r", encoding="utf-8") as f:
+        template = f.read() 
+    
+    rendered_page = template.format(
+        title=title,
+        copyright_date=str(datetime.now().year),
+        content=content
+    )
+    
+    return rendered_page
+
 def render_index():
 
     def render_post_link(post: Post) -> str:
@@ -47,15 +59,7 @@ def render_index():
         projects=''.join(rendered_project_links)
     )
     
-    with open("./templates/base_template.html", "r", encoding="utf-8") as f:
-        template = f.read() 
-    
-    rendered_page = template.format(
-        title="Sam Burkhard",
-        content=rendered_content
-    )
-    
-    return rendered_page
+    return render_in_base("Sam Burkhard", rendered_content)
 
 def render_page(template: str, html: str, frontmatter: dict):
     # Load template
@@ -76,15 +80,7 @@ def render_page(template: str, html: str, frontmatter: dict):
 
     rendered_content = template.format(**kwargs)
     
-    with open("./templates/base_template.html", "r", encoding="utf-8") as f:
-        template = f.read() 
-    
-    rendered_page = template.format(
-        title=frontmatter.get("title"),
-        content=rendered_content
-    )
-    
-    return rendered_page
+    return render_in_base(frontmatter.get("title", "Sam Burkhard"), rendered_content)
 
 def build_posts():
 
