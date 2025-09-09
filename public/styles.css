@@ -83,6 +83,13 @@ button {
 }
 button:hover { opacity: 1; }
 
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2em auto;
+}
+
 h1 {
     font-weight: 600;
     font-size: 1.125rem;

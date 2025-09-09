@@ -311,7 +311,7 @@ And that's it! I will probably spin the SSG into a separate git repo at some poi
 Clearly this is a simple project, and by no means was this an attempt at a full-scale production solution. Don't throw away Hugo or Astro! Here is a list of future improvements /changes I hope to make:
 
 * **Images:** Right now, images would require a lot of manual management, and I would want to include an image size optimization step to reduce bandwidth.
-* **Syntax highlighting** – I'm resresistantistent to adding external JS, but it looks like `highlight.js` will do the trick.
+* **Syntax highlighting** – I'm resistant to the idea of adding external JS, but it looks like `highlight.js` will do the trick.
 * **Tags** – Not sold on if this is strictly necessary, but if I could imagine it being useful, depending on my posting volume.
 * **Reloading improvements** – My auto-build feature is great, but it doesn't force a refresh on my local browser. Additionally, not everything needs to be rebuilt every time a change happens.
 

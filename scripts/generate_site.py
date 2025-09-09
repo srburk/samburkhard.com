@@ -25,10 +25,12 @@ class Post:
         self.content = content
 
 class Project:
-    def __init__(self, title: str, summary: str, link: str = ""):
+    def __init__(self, title: str, slug: str, summary: str, description: str, link: str = ""):
         self.title = title
+        self.slug = slug
         self.summary = summary
         self.link = link
+        self.description = description
 
 def render_in_base(title: str, content: str) -> str:
     with open("./templates/base_template.html", "r", encoding="utf-8") as f:
@@ -48,7 +50,7 @@ def render_index():
         return f"<article class='post'><h3>{post.date} | <a href='/{post.slug}'>{post.title} ↗</a></h3><p>{post.description}</p></article>".strip()
     
     def render_project_link(project: Project) -> str:
-        return f"<article class='project'><h3><a href='{project.link}' target='_blank' rel='noopener noreferrer'>{project.title} ↗</a></h3><p>{project.summary}</p></article>".strip()
+        return f"<article class='project'><h3><a href='{project.slug}'>{project.title} ↗</a></h3><p>{project.summary}</p></article>".strip()
     
     sorted_posts = sorted(posts, key=lambda d: d.date, reverse=True)
     rendered_post_links = [render_post_link(x) for x in sorted_posts]
@@ -137,9 +139,22 @@ def build_projects():
                         # handle front matter
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
-                    html = markdown.markdown(parts[2])
+                    html = markdown.markdown(parts[2], extensions=["fenced_code"])
                     
-                    projects.append(Project(front_matter.get("title"), front_matter.get("summary"), front_matter.get("link")))
+                    if front_matter.get("draft") and not args.allow_drafts:
+                        print(f"Skipping draft project: {front_matter.get('title')}")
+                        continue
+                                                                                
+                    rendered_page = render_page("project_template.html", html, front_matter)
+                    
+                    # write each to a different folder so github pages routes automatically
+                    rendered_page_path = BUILD_FOLDER / file_path.stem
+                    rendered_page_path.mkdir(exist_ok=True)
+                    
+                    with open(rendered_page_path / "index.html", "w", encoding="utf-8") as f:
+                        f.write(rendered_page)
+                    
+                    projects.append(Project(front_matter.get("title"), file_path.stem, front_matter.get("summary"), front_matter.get("link"), front_matter.get("description")))
                     
                 except yaml.YAMLError as e:
                     print("YAML parsing error:", e)
