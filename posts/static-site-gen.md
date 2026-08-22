@@ -75,7 +75,7 @@ The generator takes the YAML from the markdown and does a quick text replacement
 
 Here's my generic template builder I wrote:
 
-```
+```python
 def render_page(template: str, html: str, frontmatter: dict):
     # Load template
     with open(f"./templates/{template}", "r", encoding="utf-8") as f:
@@ -236,7 +236,7 @@ The project is structured like so for now. All I need to do to make a new post o
 
 I've been hosting on GitHub Pages for maybe 2 years now. I highly recommend it; I've never had any issues. Adding a custom domain is simple, and I easily added a custom workflow for the build step before deployment. Here is the action I wrote for the build and deployment steps:
 
-```
+```yaml
 name: Build and Deploy
 
 on:
