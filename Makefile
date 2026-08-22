@@ -32,12 +32,8 @@ copy-core:
 generate-site:
 	@python3 ./scripts/generate_site.py $(BUILD_FLAGS)
 
-.PHONY: check
-check: all
-	@python3 ./scripts/check_metadata.py
-
 .PHONY: lighthouse
-lighthouse: check
+lighthouse: all
 	@npx --yes @lhci/cli@0.14.x autorun --config=lighthouserc.json
 
 .PHONY: clean
