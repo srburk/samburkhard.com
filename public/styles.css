@@ -36,6 +36,8 @@ html {
     padding: clamp(16px, 4vw, 4em);
     line-height: 1.8;
     font-size: 18px;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 body {
@@ -70,8 +72,8 @@ main {
 .sidebar-header { display: flex; align-items: center; gap: 8px; justify-content: flex-start; }
 .sidebar-header h1 { margin: 0; }
 .sidebar .row { width: auto; }
-.sidebar .social { display: flex; flex-direction: column; gap: 4px; }
-.sidebar .social a { display: block; }
+.sidebar .social { display: flex; flex-direction: column; gap: 8px; }
+.sidebar .social a { display: inline-block; padding: 6px 0; min-height: 44px; line-height: 1.2; }
 
 /* 
 button {
@@ -105,10 +107,9 @@ h3 {
     font-size: 1rem;
 }
 
-h4 {
+h4, #intro p {
     font-weight: 400;
     font-size: 1rem;
-/*     margin: 0.25rem 0 0.75rem; */
 }
 
 p, li {
@@ -117,7 +118,7 @@ p, li {
 }
 
 footer p {
-    font-weight: 300;
+    font-weight: 400;
     font-size: 0.9rem;
 }
 
@@ -131,8 +132,7 @@ main a {
 }
 
 aside a {
-    color: var(--primary-color);
-    
+    color: inherit;
 } 
 .social a { text-decoration: underline;    
     text-underline-offset: 0.15em;    
@@ -162,7 +162,7 @@ pre code {
     border-style: solid;
     border-width: thin;
     border-color: #dddddd;
-    overflow-x: scroll;
+    overflow-x: auto;
     line-height: 1.2;
 }
 
@@ -187,11 +187,27 @@ hr {
 }
 
 /* START LAYOUT */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 10;
+    padding: 8px 12px;
+    background: var(--bkg-color);
+    color: var(--accent-color);
+}
+
+.skip-link:focus {
+    left: 16px;
+    top: 16px;
+}
+
 .layout {
     display: grid;
     grid-template-columns: 1fr minmax(0, 64ch) 1fr; /* center main column */
     column-gap: 100px; /* push sidebar further left from main */
-    height: 100vh;
+    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 .row {
@@ -217,9 +233,19 @@ hr {
         position: static;
         text-align: left;
         align-items: flex-start;
-        margin: 0 auto 16px; /* align with main container */
+        margin: 0 auto 24px; /* align with main container */
         max-width: 64ch;     /* match main width */
         width: auto;         /* override max-content on mobile */
+    }
+    .sidebar .social {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 4px 20px;
+    }
+    .sidebar .social a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
     }
     main {
         max-width: 64ch;

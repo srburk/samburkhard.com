@@ -26,11 +26,20 @@ serve: draft
 copy-core:
 	@mkdir -p $(BUILD)
 	@cp -r $(CORE) $(BUILD)/
+	@cp "$(BUILD)/Rich Link Preview.png" "$(BUILD)/og-image.png"
 
 .PHONY: site
 generate-site:
 	@python3 ./scripts/generate_site.py $(BUILD_FLAGS)
 
+.PHONY: check
+check: all
+	@python3 ./scripts/check_metadata.py
+
+.PHONY: lighthouse
+lighthouse: check
+	@npx --yes @lhci/cli@0.14.x autorun --config=lighthouserc.json
+
 .PHONY: clean
 clean:
-	rm -rf $(BUILD)
+	rm -rf $(BUILD) .lighthouseci

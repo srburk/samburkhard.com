@@ -2,8 +2,8 @@ from pathlib import Path
 from lxml import etree as ET
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from html import escape
 import argparse
-import string
 import markdown
 import yaml
 
@@ -12,6 +12,14 @@ import yaml
 POSTS_FOLDER = Path("./posts")
 PROJECTS_FOLDER = Path("./projects")
 BUILD_FOLDER = Path("./build")
+
+SITE_URL = "https://samburkhard.com"
+SITE_NAME = "Sam Burkhard"
+DEFAULT_DESCRIPTION = (
+    "Computer Engineering student at the University of Cincinnati. "
+    "Posts and projects on iOS, computer architecture, AI hardware, and low-level programming."
+)
+OG_IMAGE = f"{SITE_URL}/og-image.png"
 
 posts = []    
 projects = []
@@ -32,25 +40,70 @@ class Project:
         self.link = link
         self.description = description
 
-def render_in_base(title: str, content: str) -> str:
+def _attr(value: str) -> str:
+    return escape(value or "", quote=True)
+
+
+def _document_title(title: str) -> str:
+    if not title or title == SITE_NAME:
+        return SITE_NAME
+    return f"{title} · {SITE_NAME}"
+
+
+def _canonical_url(path: str) -> str:
+    if not path or path == "/":
+        return f"{SITE_URL}/"
+    if not path.startswith("/"):
+        path = "/" + path
+    return f"{SITE_URL}{path}"
+
+
+def render_in_base(
+    title: str,
+    content: str,
+    *,
+    description: str = "",
+    canonical_path: str = "/",
+    og_type: str = "website",
+) -> str:
     with open("./templates/base_template.html", "r", encoding="utf-8") as f:
-        template = f.read() 
-    
-    rendered_page = template.format(
-        title=title,
-        copyright_date=str(datetime.now().year),
-        content=content
-    )
-    
+        template = f.read()
+
+    description = (description or "").strip() or DEFAULT_DESCRIPTION
+    og_title = title or SITE_NAME
+
+    # Substitute page HTML first so braces in content cannot break templating.
+    rendered_page = template.replace("{content}", content, 1)
+    rendered_page = rendered_page.replace("{document_title}", _attr(_document_title(og_title)))
+    rendered_page = rendered_page.replace("{og_title}", _attr(og_title))
+    rendered_page = rendered_page.replace("{description}", _attr(description))
+    rendered_page = rendered_page.replace("{canonical_url}", _attr(_canonical_url(canonical_path)))
+    rendered_page = rendered_page.replace("{og_type}", _attr(og_type))
+    rendered_page = rendered_page.replace("{og_image}", _attr(OG_IMAGE))
+    rendered_page = rendered_page.replace("{copyright_date}", str(datetime.now().year))
+
     return rendered_page
 
 def render_index():
 
     def render_post_link(post: Post) -> str:
-        return f"<article class='post'><h3>{post.date} | <a href='/{post.slug}'>{post.title} ↗</a></h3><p>{post.description}</p></article>".strip()
+        title = escape(post.title or "")
+        description = escape(post.description or "")
+        date = escape(str(post.date or ""))
+        return (
+            f"<article class='post'><h3>{date} | "
+            f"<a href='/{post.slug}/'>{title} ↗</a></h3>"
+            f"<p>{description}</p></article>"
+        ).strip()
     
     def render_project_link(project: Project) -> str:
-        return f"<article class='project'><h3><a href='{project.slug}'>{project.title} ↗</a></h3><p>{project.summary}</p></article>".strip()
+        title = escape(project.title or "")
+        summary = escape(project.summary or "")
+        return (
+            f"<article class='project'><h3>"
+            f"<a href='/{project.slug}/'>{title} ↗</a></h3>"
+            f"<p>{summary}</p></article>"
+        ).strip()
     
     sorted_posts = sorted(posts, key=lambda d: d.date, reverse=True)
     rendered_post_links = [render_post_link(x) for x in sorted_posts]
@@ -64,28 +117,53 @@ def render_index():
         projects=''.join(rendered_project_links)
     )
     
-    return render_in_base("Sam Burkhard", rendered_content)
+    return render_in_base(
+        SITE_NAME,
+        rendered_content,
+        description=DEFAULT_DESCRIPTION,
+        canonical_path="/",
+        og_type="website",
+    )
 
-def render_page(template: str, html: str, frontmatter: dict):
-    # Load template
+def render_page(
+    template: str,
+    html: str,
+    frontmatter: dict,
+    *,
+    canonical_path: str,
+    og_type: str = "article",
+):
     with open(f"./templates/{template}", "r", encoding="utf-8") as f:
-        template = f.read()
-     
-    formatter = string.Formatter()
-    fields = [fname for _, fname, _, _ in formatter.parse(template) if fname]
-    
-    kwargs = {}
-    for field in fields:
-        if field == "content":
-            kwargs[field] = html
-        elif field in frontmatter:
-            kwargs[field] = frontmatter[field]
-        else:
-            raise KeyError(f"Missing required field: {field}")
+        template_text = f.read()
 
-    rendered_content = template.format(**kwargs)
-    
-    return render_in_base(frontmatter.get("title", "Sam Burkhard"), rendered_content)
+    values = {}
+    for key, value in (frontmatter or {}).items():
+        if value is None:
+            continue
+        if key in {"title", "date", "description", "summary", "link"}:
+            values[key] = escape(str(value))
+        else:
+            values[key] = str(value)
+
+    rendered_content = template_text
+    for key, value in values.items():
+        rendered_content = rendered_content.replace("{" + key + "}", value)
+    rendered_content = rendered_content.replace("{content}", html)
+
+    title = (frontmatter or {}).get("title") or SITE_NAME
+    description = (
+        (frontmatter or {}).get("summary")
+        or (frontmatter or {}).get("description")
+        or DEFAULT_DESCRIPTION
+    )
+
+    return render_in_base(
+        title,
+        rendered_content,
+        description=str(description),
+        canonical_path=canonical_path,
+        og_type=og_type,
+    )
 
 def build_posts(args):
 
@@ -108,7 +186,13 @@ def build_posts(args):
                         print(f"Skipping draft post: {front_matter.get('title')}")
                         continue
                                                                                 
-                    rendered_page = render_page("post_template.html", html, front_matter)
+                    rendered_page = render_page(
+                        "post_template.html",
+                        html,
+                        front_matter,
+                        canonical_path=f"/{file_path.stem}/",
+                        og_type="article",
+                    )
                     
                     # write each to a different folder so github pages routes automatically
                     rendered_page_path = BUILD_FOLDER / file_path.stem
@@ -145,7 +229,13 @@ def build_projects():
                         print(f"Skipping draft project: {front_matter.get('title')}")
                         continue
                                                                                 
-                    rendered_page = render_page("project_template.html", html, front_matter)
+                    rendered_page = render_page(
+                        "project_template.html",
+                        html,
+                        front_matter,
+                        canonical_path=f"/{file_path.stem}/",
+                        og_type="website",
+                    )
                     
                     # write each to a different folder so github pages routes automatically
                     rendered_page_path = BUILD_FOLDER / file_path.stem
@@ -197,6 +287,35 @@ def generate_rss():
     tree.write(output_path, encoding="utf-8", xml_declaration=True)
     print(f"✅ RSS feed written to {output_path}")
 
+
+def generate_robots():
+    output_path = BUILD_FOLDER / "robots.txt"
+    output_path.write_text(
+        "User-agent: *\nAllow: /\n\n"
+        f"Sitemap: {SITE_URL}/sitemap.xml\n",
+        encoding="utf-8",
+    )
+    print(f"✅ robots.txt written to {output_path}")
+
+
+def generate_sitemap():
+    urls = [f"{SITE_URL}/"]
+    for post in posts:
+        urls.append(f"{SITE_URL}/{post.slug}/")
+    for project in projects:
+        urls.append(f"{SITE_URL}/{project.slug}/")
+
+    urlset = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+    for loc in urls:
+        url_el = ET.SubElement(urlset, "url")
+        ET.SubElement(url_el, "loc").text = loc
+
+    output_path = BUILD_FOLDER / "sitemap.xml"
+    ET.ElementTree(urlset).write(
+        output_path, encoding="utf-8", xml_declaration=True
+    )
+    print(f"✅ sitemap.xml written to {output_path}")
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Static site generator")
@@ -235,11 +354,20 @@ if __name__ == "__main__":
     print(f"✅ index.html written to {BUILD_FOLDER / 'index.html'}")
     
     # Generate 404 page
-    rendered_404 = render_page("404_template.html", "", {})
+    rendered_404 = render_page(
+        "404_template.html",
+        "",
+        {"title": "Page not found", "summary": "This page does not exist."},
+        canonical_path="/404.html",
+        og_type="website",
+    )
     with open(BUILD_FOLDER / "404.html", "w", encoding="utf-8") as f:
         f.write(rendered_404)
     
     print(f"✅ 404.html written to {BUILD_FOLDER / '404.html'}")
+
+    generate_robots()
+    generate_sitemap()
         
     if args.rss:
         generate_rss()
