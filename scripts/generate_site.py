@@ -13,8 +13,13 @@ POSTS_FOLDER = Path("./posts")
 PROJECTS_FOLDER = Path("./projects")
 BUILD_FOLDER = Path("./build")
 
-posts = []    
+# GoatCounter site code. Create the matching site at https://www.goatcounter.com
+# (free for personal use). Change this if the code is already taken.
+GOATCOUNTER_CODE = "samburkhard"
+
+posts = []
 projects = []
+include_analytics = False
 
 class Post:
     def __init__(self, slug: str, title: str, date: str, content: str, description=""):
@@ -32,16 +37,24 @@ class Project:
         self.link = link
         self.description = description
 
+def goatcounter_snippet() -> str:
+    return (
+        f'<script data-goatcounter="https://{GOATCOUNTER_CODE}.goatcounter.com/count"\n'
+        '        async src="https://gc.zgo.at/count.js"></script>'
+    )
+
+
 def render_in_base(title: str, content: str) -> str:
     with open("./templates/base_template.html", "r", encoding="utf-8") as f:
-        template = f.read() 
-    
+        template = f.read()
+
     rendered_page = template.format(
         title=title,
         copyright_date=str(datetime.now().year),
-        content=content
+        content=content,
+        analytics=goatcounter_snippet() if include_analytics else "",
     )
-    
+
     return rendered_page
 
 def render_index():
@@ -213,9 +226,12 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    
+    include_analytics = not args.allow_drafts
+
     if args.allow_drafts:
         print("⚠️ In draft mode")
+    if include_analytics:
+        print(f"📊 Analytics enabled ({GOATCOUNTER_CODE}.goatcounter.com)")
 
     BUILD_FOLDER.mkdir(exist_ok=True)
     
