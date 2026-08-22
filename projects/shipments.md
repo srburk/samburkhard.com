@@ -66,7 +66,7 @@ I used the debugger heavily throughout development to identify threading issues 
 
 I built an XCTest suite to use externally loaded JSON data. I used a Python script to build a list of weights and come up with 50 random state pairs with a state border fee of $50. I found the optimal route in Python using Dijkstra's algorithm and output the results into `expected_results.json`. Each test follows this pattern:
 
-```
+```json
   {
     "test_number": 40,
     "start": "RI",

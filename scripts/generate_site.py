@@ -58,6 +58,24 @@ def language_from_class(class_attr: str) -> str:
     return ""
 
 
+def infer_language(code: str) -> str:
+    stripped = code.strip()
+    if not stripped:
+        return ""
+    if re.match(r"(def|class|async def|import |from )\b", stripped):
+        return "python"
+    if stripped[0] in "{[":
+        return "json"
+    shebang = stripped.split("\n", 1)[0]
+    if shebang.startswith("#!") and "bash" in shebang:
+        return "bash"
+    if re.match(r"name:\s", stripped) and re.search(r"(?m)^on:\s", stripped):
+        return "yaml"
+    if stripped.startswith("---") and re.search(r"(?m)^[A-Za-z0-9_-]+:\s", stripped):
+        return "yaml"
+    return ""
+
+
 def highlight_source(code: str, lang: str) -> tuple[str, str]:
     lexer = None
     if lang:
@@ -77,8 +95,8 @@ def highlight_source(code: str, lang: str) -> tuple[str, str]:
 
 def enhance_code_blocks(html: str) -> str:
     def replace_block(match: re.Match) -> str:
-        lang = language_from_class(match.group(1) or "")
         source = html_lib.unescape(match.group(2))
+        lang = language_from_class(match.group(1) or "") or infer_language(source)
         highlighted, display_name = highlight_source(source, lang)
 
         lang_class = f' class="language-{html_lib.escape(lang, quote=True)}"' if lang else ""
