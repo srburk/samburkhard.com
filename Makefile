@@ -32,6 +32,11 @@ copy-core:
 generate-site:
 	@python3 ./scripts/generate_site.py $(BUILD_FLAGS)
 
+.PHONY: preview
+preview: all
+	@echo "Serving production build at http://127.0.0.1:8080/"
+	@python3 -m http.server 8080 --bind 127.0.0.1 --directory $(BUILD)
+
 .PHONY: lighthouse
 lighthouse: all
 	@npx --yes @lhci/cli@0.14.x autorun --config=lighthouserc.json
