@@ -102,7 +102,7 @@ I like this approach because it can automatically pull variables from the templa
 
 ## RSS
 
-Really Simple Syndication (RSS) is a great standard for quickly and easily allowing people to regularly check your website. I follow dozens of RSS feeds and check in every day, so I wanted to include an RSS feed on my site. I added a build step for generating a feed from the post lists. I followed the spec [here](https://www.rssboard.org/rss-specification).
+Really Simple Syndication (RSS) is a great standard for quickly and easily allowing people to regularly check your website. I follow dozens of RSS feeds and check in every day, so I wanted to include an RSS feed on my site. I added a build step for generating a feed from the post lists. I followed the [RSS specification](https://www.rssboard.org/rss-specification).
 
 The Python code for generating the feed is pretty simple. All an RSS feed is a `.xml` file on a server. Since I already go through each post when processing, we can use the same list of posts to make the RSS feed. As mentioned earlier, I used the library `lxml` to make the XML handling easier.
 

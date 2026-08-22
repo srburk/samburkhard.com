@@ -26,6 +26,7 @@
         "viewport": "error",
         "heading-order": "error",
         "link-name": "error",
+        "link-text": "error",
         "target-size": "warn",
         "is-on-https": "off",
         "canonical": "off",
