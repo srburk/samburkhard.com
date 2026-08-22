@@ -13,8 +13,6 @@ POSTS_FOLDER = Path("./posts")
 PROJECTS_FOLDER = Path("./projects")
 BUILD_FOLDER = Path("./build")
 
-COPYRIGHT_START_YEAR = 2025
-
 posts = []    
 projects = []
 
@@ -38,16 +36,9 @@ def render_in_base(title: str, content: str) -> str:
     with open("./templates/base_template.html", "r", encoding="utf-8") as f:
         template = f.read() 
     
-    current_year = datetime.now().year
-    copyright_date = (
-        f"{COPYRIGHT_START_YEAR}–{current_year}"
-        if current_year > COPYRIGHT_START_YEAR
-        else str(COPYRIGHT_START_YEAR)
-    )
-
     rendered_page = template.format(
         title=title,
-        copyright_date=copyright_date,
+        copyright_date=str(datetime.now().year),
         content=content
     )
     
