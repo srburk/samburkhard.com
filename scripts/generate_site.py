@@ -2,7 +2,13 @@ from pathlib import Path
 from lxml import etree as ET
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import get_lexer_by_name
+from pygments.util import ClassNotFound
 import argparse
+import html as html_lib
+import re
 import string
 import markdown
 import yaml
@@ -21,6 +27,12 @@ posts = []
 projects = []
 include_analytics = False
 
+CODE_BLOCK_RE = re.compile(
+    r'<pre><code(?: class="([^"]*)")?>(.*?)</code></pre>',
+    re.DOTALL,
+)
+PYGMENTS_FORMATTER = HtmlFormatter(nowrap=True)
+
 class Post:
     def __init__(self, slug: str, title: str, date: str, content: str, description=""):
         self.slug = slug
@@ -36,6 +48,64 @@ class Project:
         self.summary = summary
         self.link = link
         self.description = description
+
+def language_from_class(class_attr: str) -> str:
+    for cls in class_attr.split():
+        if cls.startswith("language-"):
+            return cls[len("language-"):]
+        if cls.startswith("lang-"):
+            return cls[len("lang-"):]
+    return ""
+
+
+def highlight_source(code: str, lang: str) -> tuple[str, str]:
+    lexer = None
+    if lang:
+        try:
+            lexer = get_lexer_by_name(lang)
+        except ClassNotFound:
+            lexer = None
+
+    if lexer is None:
+        return html_lib.escape(code), lang
+
+    try:
+        return highlight(code, lexer, PYGMENTS_FORMATTER), lexer.name
+    except Exception:
+        return html_lib.escape(code), lexer.name
+
+
+def enhance_code_blocks(html: str) -> str:
+    def replace_block(match: re.Match) -> str:
+        lang = language_from_class(match.group(1) or "")
+        source = html_lib.unescape(match.group(2))
+        highlighted, display_name = highlight_source(source, lang)
+
+        lang_class = f' class="language-{html_lib.escape(lang, quote=True)}"' if lang else ""
+        data_lang = (
+            f' data-lang="{html_lib.escape(display_name, quote=True)}"' if display_name else ""
+        )
+        caption = ""
+        if display_name:
+            caption = (
+                '<figcaption class="code-block__header">'
+                f'<span class="code-block__lang">{html_lib.escape(display_name)}</span>'
+                "</figcaption>"
+            )
+
+        return (
+            f'<figure class="code-block"{data_lang}>'
+            f"{caption}"
+            f"<pre><code{lang_class}>{highlighted}</code></pre>"
+            "</figure>"
+        )
+
+    return CODE_BLOCK_RE.sub(replace_block, html)
+
+
+def markdown_to_html(md_text: str) -> str:
+    return enhance_code_blocks(markdown.markdown(md_text, extensions=["fenced_code"]))
+
 
 def goatcounter_snippet() -> str:
     return (
@@ -115,7 +185,7 @@ def build_posts(args):
                         # handle front matter
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
-                    html = markdown.markdown(parts[2], extensions=["fenced_code"])
+                    html = markdown_to_html(parts[2])
                     
                     if front_matter.get("draft") and not args.allow_drafts:
                         print(f"Skipping draft post: {front_matter.get('title')}")
@@ -152,7 +222,7 @@ def build_projects():
                         # handle front matter
                         raise ValueError("Missing YAML front matter")
                     front_matter = yaml.safe_load(parts[1])
-                    html = markdown.markdown(parts[2], extensions=["fenced_code"])
+                    html = markdown_to_html(parts[2])
                     
                     if front_matter.get("draft") and not args.allow_drafts:
                         print(f"Skipping draft project: {front_matter.get('title')}")
