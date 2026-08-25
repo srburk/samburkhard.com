@@ -34,3 +34,7 @@ generate-site:
 .PHONY: clean
 clean:
 	rm -rf $(BUILD)
+
+.PHONY: stylex-mockup
+stylex-mockup:
+	@cd stylex-mockup && npm install && npm run dev
