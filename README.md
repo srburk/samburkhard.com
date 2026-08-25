@@ -1,5 +1,14 @@
-
 # samburkhard.com
+
+## StyleX mockup
+
+A React + StyleX prototype of this site lives in `stylex-mockup/`. It does not replace the Python static site generator. From the repo root:
+
+```
+make stylex-mockup
+```
+
+Or `cd stylex-mockup && npm install && npm run dev`, then open http://127.0.0.1:5173/.
 
 ## Running
 
