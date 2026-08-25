@@ -2,7 +2,7 @@
 
 ## StyleX mockup
 
-A React + StyleX prototype of this site lives in `stylex-mockup/`. It does not replace the Python static site generator. From the repo root:
+A vanilla HTML/TypeScript + StyleX prototype of this site lives in `stylex-mockup/`. It does not replace the Python static site generator. From the repo root:
 
 ```
 make stylex-mockup

@@ -1,7 +1,27 @@
-import { staticSiteGenPost } from '../content/staticSiteGen';
-import { socialLinks, type Post, type Project } from './types';
+export const socialLinks = [
+  { href: 'https://github.com/srburk', label: 'GitHub' },
+  {
+    href: 'https://www.linkedin.com/in/sam-burkhard-712734223/',
+    label: 'LinkedIn',
+  },
+  { href: 'https://x.com/samrburkhard', label: 'X' },
+  { href: 'mailto:burkhas4@mail.uc.edu', label: 'Email' },
+] as const;
 
-export { socialLinks };
+export type Post = {
+  slug: string;
+  title: string;
+  date: string;
+  summary: string;
+};
+
+export type Project = {
+  slug: string;
+  title: string;
+  summary: string;
+  description: string;
+  link: string;
+};
 
 export const posts: Post[] = [
   {
@@ -9,7 +29,6 @@ export const posts: Post[] = [
     title: 'Building a Static Site Generator in Python',
     date: '08-16-2025',
     summary: 'Writing a static site generator for this website.',
-    content: staticSiteGenPost,
   },
 ];
 
