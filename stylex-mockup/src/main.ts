@@ -33,9 +33,9 @@ function pageFor(pathname: string): { title: string; html: string } {
 function render(pathname: string = location.pathname): void {
   const page = pageFor(pathname);
   document.title = page.title;
-  const root = document.getElementById('root');
-  if (!root) return;
-  root.innerHTML = renderLayout(page.html);
+  const site = document.getElementById('site');
+  if (!site) return;
+  site.innerHTML = renderLayout(page.html);
 }
 
 function isInternalLink(anchor: HTMLAnchorElement): boolean {
