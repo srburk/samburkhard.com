@@ -1,9 +1,11 @@
 
 ---
 title: 'Shipments'
-summary: 'iOS application built with Objective-C and UIKit in 2 weeks for solving graph-based concurrency problem with visual feedback.'
+summary: 'iOS app that finds a cheapest multi-state shipping route, with a border fee you set.'
 description: 'The objective of this project was to develop an iOS app in Objective-C with UIKit. It should accept 2 states as input and calculate the cheapest shipping route along the contiguous United States. The government has imposed a fee on crossing state borders that I allow the user to set, and the fuel cost from state to state can vary, requiring a third-party API to get access.'
 link: https://github.com/srburk/StatelyShipments
+tech: 'Objective-C, UIKit'
+order: 1
 ---
 
 ![StateShipmentsUI](https://github.com/user-attachments/assets/0f329da5-82da-44b7-8014-b13771bb205a)

@@ -1,9 +1,10 @@
 
 ---
-title: 'Embedded RF Messenger'
-summary: 'STM32W-based wireless messaging device with FreeRTOS real-time processing, and integrated I2C/SPI interfaces for keyboard and display.'
-description: 'STM32 C FreeRTOS'
+title: 'RF Messenger'
+summary: 'STM32 wireless messenger. Keyboard, display, FreeRTOS.'
 link: https://github.com/srburk/RF-Messenger
+tech: 'C, FreeRTOS, STM32'
+order: 2
 ---
 
 ## Motivations

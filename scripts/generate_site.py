@@ -22,6 +22,7 @@ BUILD_FOLDER = Path("./build")
 # GoatCounter site code. Create the matching site at https://www.goatcounter.com
 # (free for personal use). Change this if the code is already taken.
 GOATCOUNTER_CODE = "samburkhard"
+SITE_DESCRIPTION = "Computer engineering. Posts and projects."
 
 posts = []
 projects = []
@@ -42,12 +43,21 @@ class Post:
         self.content = content
 
 class Project:
-    def __init__(self, title: str, slug: str, summary: str, description: str, link: str = ""):
+    def __init__(
+        self,
+        title: str,
+        slug: str,
+        summary: str,
+        tech: str = "",
+        link: str = "",
+        order: int = 100,
+    ):
         self.title = title
         self.slug = slug
         self.summary = summary
+        self.tech = tech
         self.link = link
-        self.description = description
+        self.order = order
 
 def language_from_class(class_attr: str) -> str:
     for cls in class_attr.split():
@@ -114,12 +124,26 @@ def goatcounter_snippet() -> str:
     )
 
 
-def render_in_base(title: str, content: str) -> str:
+def iso_date(date_str: str) -> str:
+    if not date_str:
+        return ""
+    for fmt in ("%m-%d-%Y", "%Y-%m-%d", "%m/%d/%Y"):
+        try:
+            return datetime.strptime(str(date_str), fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    return str(date_str)
+
+
+def render_in_base(title: str, content: str, description: str = "") -> str:
     with open("./templates/base_template.html", "r", encoding="utf-8") as f:
         template = f.read()
 
+    meta_description = description.strip() if description else SITE_DESCRIPTION
+
     rendered_page = template.format(
-        title=title,
+        title=html_lib.escape(title, quote=True),
+        meta_description=html_lib.escape(meta_description, quote=True),
         copyright_date=str(datetime.now().year),
         content=content,
         analytics=goatcounter_snippet() if include_analytics else "",
@@ -130,24 +154,46 @@ def render_in_base(title: str, content: str) -> str:
 def render_index():
 
     def render_post_link(post: Post) -> str:
-        return f"<article class='post'><h3>{post.date} | <a href='/{post.slug}'>{post.title} ↗</a></h3><p>{post.description}</p></article>".strip()
-    
+        title = html_lib.escape(post.title or "")
+        summary = html_lib.escape(post.description or "")
+        date = iso_date(post.date)
+        href = html_lib.escape(f"/{post.slug}", quote=True)
+        return (
+            f'<article class="post">'
+            f'<p class="meta"><time datetime="{html_lib.escape(date, quote=True)}">{html_lib.escape(date)}</time></p>'
+            f'<a class="entry-title" href="{href}">{title}</a>'
+            f'<p class="summary">{summary}</p>'
+            f"</article>"
+        )
+
     def render_project_link(project: Project) -> str:
-        return f"<article class='project'><h3><a href='{project.slug}'>{project.title} ↗</a></h3><p>{project.summary}</p></article>".strip()
-    
+        title = html_lib.escape(project.title or "")
+        summary = html_lib.escape(project.summary or "")
+        tech = html_lib.escape(project.tech or "")
+        href = html_lib.escape(f"/{project.slug}", quote=True)
+        tech_html = f'<p class="tech">{tech}</p>' if tech else ""
+        return (
+            f'<article class="project">'
+            f'<a class="entry-title" href="{href}">{title}</a>'
+            f'<p class="summary">{summary}</p>'
+            f"{tech_html}"
+            f"</article>"
+        )
+
     sorted_posts = sorted(posts, key=lambda d: d.date, reverse=True)
+    sorted_projects = sorted(projects, key=lambda p: (p.order, p.title or ""))
     rendered_post_links = [render_post_link(x) for x in sorted_posts]
-    rendered_project_links = [render_project_link(x) for x in projects]
-    
+    rendered_project_links = [render_project_link(x) for x in sorted_projects]
+
     with open("./templates/index_template.html", "r", encoding="utf-8") as f:
         template = f.read()
-        
+
     rendered_content = template.format(
-        posts=''.join(rendered_post_links),
-        projects=''.join(rendered_project_links)
+        posts="".join(rendered_post_links),
+        projects="".join(rendered_project_links),
     )
-    
-    return render_in_base("Sam Burkhard", rendered_content)
+
+    return render_in_base("Sam Burkhard", rendered_content, SITE_DESCRIPTION)
 
 def render_page(template: str, html: str, frontmatter: dict):
     # Load template
@@ -167,8 +213,14 @@ def render_page(template: str, html: str, frontmatter: dict):
             raise KeyError(f"Missing required field: {field}")
 
     rendered_content = template.format(**kwargs)
-    
-    return render_in_base(frontmatter.get("title", "Sam Burkhard"), rendered_content)
+
+    page_title = frontmatter.get("title", "Sam Burkhard")
+    page_description = (
+        frontmatter.get("summary")
+        or frontmatter.get("description")
+        or SITE_DESCRIPTION
+    )
+    return render_in_base(page_title, rendered_content, page_description)
 
 def build_posts(args):
 
@@ -237,7 +289,16 @@ def build_projects():
                     with open(rendered_page_path / "index.html", "w", encoding="utf-8") as f:
                         f.write(rendered_page)
                     
-                    projects.append(Project(front_matter.get("title"), file_path.stem, front_matter.get("summary"), front_matter.get("link"), front_matter.get("description")))
+                    projects.append(
+                        Project(
+                            title=front_matter.get("title"),
+                            slug=file_path.stem,
+                            summary=front_matter.get("summary", ""),
+                            tech=front_matter.get("tech", ""),
+                            link=front_matter.get("link", ""),
+                            order=int(front_matter.get("order", 100)),
+                        )
+                    )
                     
                 except yaml.YAMLError as e:
                     print("YAML parsing error:", e)
@@ -321,7 +382,7 @@ if __name__ == "__main__":
     print(f"✅ index.html written to {BUILD_FOLDER / 'index.html'}")
     
     # Generate 404 page
-    rendered_404 = render_page("404_template.html", "", {})
+    rendered_404 = render_page("404_template.html", "", {"title": "404", "summary": "Page not found."})
     with open(BUILD_FOLDER / "404.html", "w", encoding="utf-8") as f:
         f.write(rendered_404)
     

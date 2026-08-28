@@ -2,7 +2,7 @@
 ---
 title: 'Building a Static Site Generator in Python'
 date: 08-16-2025
-summary: 'Writing a static site generator for this website.'
+summary: 'Markdown in, HTML and RSS out. Small enough that I know every line.'
 draft: false
 ---
 
