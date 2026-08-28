@@ -3,51 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="HandheldFriendly" content="true">
+    <meta name="description" content="{meta_description}">
 
-    <!-- Rich Previews -->
     <meta property="og:title" content="{title}">
-    <meta property="og:description" content="{title}">
+    <meta property="og:description" content="{meta_description}">
     <meta property="og:image" content="https://samburkhard.com/Rich%20Link%20Preview.png">
     <meta property="og:url" content="https://samburkhard.com">
-    
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{title}">
-    <meta name="twitter:description" content="{title}">
+    <meta name="twitter:description" content="{meta_description}">
     <meta name="twitter:image" content="https://samburkhard.com/Rich%20Link%20Preview.png">
 
     <link rel="stylesheet" href="/styles.css">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com"> 
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <a rel="me" href="https://mastodon.social/@samburkhard"></a>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
-    <link rel=alternate title="Posts" type="application/rss+xml" href="/feed.xml">
+    <link rel="me" href="https://mastodon.social/@samburkhard">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="alternate" title="Posts" type="application/rss+xml" href="/feed.xml">
     <title>{title}</title>
 </head>
 <body>
     <div class="layout">
         <aside class="sidebar">
-            <div class="row sidebar-header">
-                <h1 id="wordmark"><a href="/index.html">⬥ Sam Burkhard</a></h1>
+            <div class="sidebar-header">
+                <h1 class="wordmark"><a href="/">Sam Burkhard</a></h1>
+                <p class="tagline">Computer engineering</p>
             </div>
-            <nav class="social">
+            <nav class="social" aria-label="Social">
                 <a href="https://github.com/srburk" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="https://www.linkedin.com/in/sam-burkhard-712734223/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                 <a href="https://x.com/samrburkhard" target="_blank" rel="noopener noreferrer">X</a>
-                <a href="mailto: burkhas4@mail.uc.edu">Email</a>
+                <a href="mailto:burkhas4@mail.uc.edu">Email</a>
             </nav>
-            
         </aside>
 
         <main>
             {content}
-             
-             <footer>
-                <p>© {copyright_date} Sam Burkhard</p>
+
+            <footer>
+                <p>© {copyright_date}</p>
             </footer>
         </main>
     </div>
