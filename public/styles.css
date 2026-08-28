@@ -8,7 +8,7 @@ body {
     --bkg-code-color: #f5f5f5;
     --code-border: color-mix(in srgb, var(--text-color) 12%, transparent);
     --code-lang-color: color-mix(in srgb, var(--text-color) 55%, transparent);
-    --syn-comment: #6b7280;
+    --syn-comment: #4b5563;
     --syn-keyword: #115995;
     --syn-string: #0f7b4c;
     --syn-number: #b45309;
@@ -79,7 +79,8 @@ footer p {
     grid-template-columns: minmax(10rem, 1fr) minmax(0, 2fr);
     column-gap: 2.75rem;
     align-items: start;
-    max-width: 46rem;
+    width: 100%;
+    max-width: min(46rem, 100%);
     margin: 0 auto;
 }
 
@@ -195,6 +196,12 @@ a:hover {
     text-underline-offset: 0.15em;
 }
 
+main p a,
+main li a {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
 .wordmark a:hover,
 .entry-title:hover {
     text-decoration: none;
@@ -234,10 +241,18 @@ hr {
         display: flex;
         flex-direction: column;
         gap: 2.5rem;
+        align-items: stretch;
     }
 
     .sidebar {
         position: static;
+        width: 100%;
+    }
+
+    main {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
     }
 }
 
