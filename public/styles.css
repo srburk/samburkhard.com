@@ -171,11 +171,18 @@ main a {
 }
 
 aside a {
-    color: var(--text-color);
     text-decoration: none;
 }
-aside a:hover {
+#wordmark a {
+    color: var(--text-color);
+}
+.social a {
     color: var(--accent-color);
+}
+.social a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
 }
 
 ul, ol {
