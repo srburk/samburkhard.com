@@ -120,7 +120,6 @@ def render_in_base(title: str, content: str) -> str:
 
     rendered_page = template.format(
         title=title,
-        copyright_date=str(datetime.now().year),
         content=content,
         analytics=goatcounter_snippet() if include_analytics else "",
     )

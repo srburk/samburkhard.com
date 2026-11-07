@@ -23,8 +23,8 @@ body {
 
 body.dark-theme {
     --text-color: #ffffff;
-    --bkg-color: #101517;
-    --bkg-code-color: #1a2024;
+    --bkg-color: #141416;
+    --bkg-code-color: #1c1c1f;
     --accent-color: #5AB9EA;
     --syn-comment: #8b949e;
     --syn-string: #7ee787;
@@ -40,8 +40,8 @@ body.dark-theme {
 @media (prefers-color-scheme: dark) {
     body {
         --text-color: #ffffff;
-        --bkg-color: #101517;
-        --bkg-code-color: #1a2024;
+        --bkg-color: #141416;
+        --bkg-code-color: #1c1c1f;
         --accent-color: #5AB9EA;
         --syn-comment: #8b949e;
         --syn-string: #7ee787;
@@ -171,14 +171,19 @@ main a {
 }
 
 aside a {
-    color: var(--primary-color);
-    
-} 
-.social a { text-decoration: underline;    
-    text-underline-offset: 0.15em;    
-    text-decoration-thickness: 0.08em;
+    text-decoration: none;
 }
-.social a:hover { text-decoration-thickness: 0.12em; }
+#wordmark a {
+    color: var(--text-color);
+}
+.social a {
+    color: var(--accent-color);
+}
+.social a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+}
 
 ul, ol {
     margin: 0;
